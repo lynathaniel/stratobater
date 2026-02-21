@@ -27,5 +27,5 @@ All commit messages must follow this format:
 ### Example
 
 ```bash
-git commit -m "[feat]: Add play button to Fretboard component"
+git commit -m "feat: Add play button to Fretboard component"
 ```
