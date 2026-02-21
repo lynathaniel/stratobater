@@ -92,9 +92,25 @@ export const Fretboard: React.FC = () => {
 
       {/* Fretboard Container */}
       <div className="w-full overflow-x-auto pb-8 px-4 custom-scrollbar">
-              <div className="flex flex-col min-w-max border-l-4 border-neutral-400 bg-neutral-800/50 rounded-l-sm shadow-2xl">
+        <div className="flex"> {/* New wrapper for labels and fretboard grid */}
+          {/* Static String Labels Column */}
+          <div className="flex flex-col min-w-[30px] pr-2 justify-around items-end text-neutral-400 text-sm font-bold">
+            {tuning.slice().reverse().map((stringNote, index) => {
+              const noteName = stringNote.charAt(0); // 'E' from 'E2' or 'E4'
+              // Display 'e' for high E (E4), otherwise the note name
+              const displayLabel = noteName === 'E' && stringNote.endsWith('4') ? 'e' : noteName;
+              return (
+                <div key={index} className="h-12 flex items-center">
+                  {displayLabel}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Existing Fretboard Grid */}
+          <div className="flex flex-col min-w-max border-l-4 border-neutral-400 bg-neutral-800/50 rounded-l-sm shadow-2xl">
                             {fretboardData.slice().reverse().map((stringData, stringRenderIndex) => {
-                              const isOpenHighE = stringData[0].note.startsWith('E4'); // Check if open note is E4 (High E)
+                              // const isOpenHighE = stringData[0].note.startsWith('E4'); // No longer needed
                               
                               return (
                                 <div key={stringRenderIndex} className="flex relative group">
@@ -117,7 +133,8 @@ export const Fretboard: React.FC = () => {
                                           "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-all duration-200 cursor-default select-none ring-2",
                                           getNoteStyle(fret)
                                         )}>
-                                          {isOpenHighE ? fret.noteName.toLowerCase() : fret.noteName}
+                                          {/* Notes always uppercase */}
+                                          {fret.noteName}
                                         </div>
                                       )}
                                     </div>
@@ -132,7 +149,8 @@ export const Fretboard: React.FC = () => {
                     </div>
                 ))}
             </div>
-        </div>
+          </div> {/* End of existing Fretboard Grid */}
+        </div> {/* End of new wrapper */}
       </div>
     </div>
   );
