@@ -1,13 +1,18 @@
 # Contributing to Stratobater
 
-We follow a strict "Atomic Commit" workflow to ensure high code quality and easy debugging.
+We follow a **strict** "Micro-Atomic Commit" workflow. Each commit must represent a single, isolated logical step. Do not group multiple steps (like initialization + installation + config) into one commit.
 
 ## Workflow
 
-1.  **Small, Atomic Changes:** Focus on one small task at a time (e.g., "Add button," "Setup build"). Do not bundle unrelated changes.
+1.  **Micro-Atomic Changes:** Break tasks down into their smallest components.
+    *   **Bad:** "Initialize project, install deps, and configure tailwind" (Too large)
+    *   **Good:**
+        1.  `chore: Initialize Vite project`
+        2.  `chore: Install dependencies`
+        3.  `feat: Configure Tailwind CSS`
 2.  **Verify Locally:** Follow the steps in [DEVELOPING.md](./DEVELOPING.md) to ensure your changes work and build before committing.
 3.  **Commit:** Stage your changes and write a commit message following the schema below.
-4.  **Push Immediately:** always push your changes to the remote repository immediately after committing.
+4.  **Push Immediately:** Always push your changes to the remote repository immediately after committing.
 
 ## Commit Schema
 
@@ -23,9 +28,18 @@ All commit messages must follow this format:
 -   **fix**: A bug fix (e.g., "Fix mobile scroll issue")
 -   **docs**: Documentation only changes
 -   **chore**: Maintenance, build config, or dependency updates (e.g., "Setup Vite")
+-   **style**: Code style changes (formatting, missing semi-colons, etc.)
+-   **refactor**: A code change that neither fixes a bug nor adds a feature
 
-### Example
+### Examples of Granularity
 
-```bash
-git commit -m "feat: Add play button to Fretboard component"
-```
+**Scenario: Setting up a new component**
+-   `feat: Create Fretboard directory structure`
+-   `feat: Add basic Fretboard component file`
+-   `feat: Add Fretboard styles`
+-   `feat: Export Fretboard from index`
+
+**Scenario: Project Setup**
+-   `chore: Initialize Vite`
+-   `chore: Add React plugin`
+-   `chore: Install dependencies`
