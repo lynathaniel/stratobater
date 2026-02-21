@@ -51,7 +51,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 ### Phase 2: Core State & Logic
 - [x] `feat: Create Zustand store file structure`
 - [x] `feat: Define initial StoreState interface (root, scale, tuning)`
-- [ ] `feat: Implement basic store actions (setRoot, setScale)`
+- [x] `feat: Implement basic store actions (setRoot, setScale)`
 - [ ] `feat: Create fretboard utility file`
 - [ ] `feat: Implement string tuning logic in utility`
 - [ ] `feat: Implement scale calculation logic using Tonal.js`
