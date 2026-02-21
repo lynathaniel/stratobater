@@ -10,3 +10,66 @@ export const getStringNotes = (openNote: string, fretCount: number = 22): string
 export const getScaleNotes = (root: string, scaleType: string): string[] => {
   return Scale.get(`${root} ${scaleType}`).notes;
 };
+
+export interface FretData {
+  note: string; // e.g., "C#4"
+  noteName: string; // e.g., "C#" (pitch class)
+  interval: string | null;
+  isRoot: boolean;
+  isTriad: boolean;
+  inScale: boolean;
+}
+
+export const getFretboard = (
+  root: string, 
+  scaleType: string, 
+  tuning: string[], 
+  fretCount: number = 22
+): FretData[][] => {
+  const scale = Scale.get(`${root} ${scaleType}`);
+  // Normalize scale notes to pitch classes
+  const scaleNotes = scale.notes.map(n => Note.get(n).pc);
+  const scaleIntervals = scale.intervals; 
+  
+  return tuning.map(openStringNote => {
+    return getStringNotes(openStringNote, fretCount).map(note => {
+      const noteObj = Note.get(note);
+      const notePc = noteObj.pc; 
+      
+      // Check if note is in scale (handle enharmonics simply by checking inclusion first, 
+      // maybe improve with chroma if needed)
+      // Tonal usually standardizes to sharps or flats based on key.
+      // But if tuning has flats and scale has sharps, string match fails.
+      // Safer: check Note.chroma(note) against scale chromas?
+      // Or simply: scale.notes.some(s => Note.chroma(s) === Note.chroma(note))
+      
+      const index = scaleNotes.findIndex(s => Note.chroma(s) === Note.chroma(notePc));
+      const inScale = index !== -1;
+      
+      let interval: string | null = null;
+      let isRoot = false;
+      let isTriad = false;
+
+      if (inScale) {
+        interval = scaleIntervals[index];
+        isRoot = interval === '1P';
+        // Triad usually 1, 3, 5. 
+        // 3rd is typically 3M or 3m. 5th is 5P (or 5d in dim).
+        // We'll define triad as 1P and the 3rd and 5th degrees of the scale.
+        // In 7-note scale, these are usually indices 0, 2, 4.
+        const isThird = index === 2;
+        const isFifth = index === 4;
+        isTriad = isRoot || isThird || isFifth;
+      }
+
+      return {
+        note,
+        noteName: notePc,
+        interval,
+        isRoot,
+        isTriad,
+        inScale
+      };
+    });
+  });
+};

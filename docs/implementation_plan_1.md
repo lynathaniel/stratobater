@@ -55,7 +55,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Create fretboard utility file`
 - [x] `feat: Implement string tuning logic in utility`
 - [x] `feat: Implement scale calculation logic using Tonal.js`
-- [ ] `feat: Implement fretboard data generation (2D array)`
+- [x] `feat: Implement fretboard data generation (2D array)`
 
 ### Phase 3: Fretboard UI
 - [ ] `feat: Create Fretboard component scaffolding`
