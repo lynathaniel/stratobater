@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
+import { generateIntervalQuestion, IntervalQuestion } from '../utils/earTrainer';
 
 export const EarTrainer: React.FC = () => {
   const [started, setStarted] = useState(false);
   const [driveMode, setDriveMode] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState<IntervalQuestion | null>(null);
   const synth = useRef<Tone.PolySynth | null>(null);
 
   const handleStart = async () => {
@@ -11,6 +13,46 @@ export const EarTrainer: React.FC = () => {
     synth.current = new Tone.PolySynth(Tone.Synth).toDestination();
     setStarted(true);
   };
+
+  useEffect(() => {
+    let isRunning = true;
+
+    const playLoop = async () => {
+      if (!started || !driveMode || !synth.current) return;
+
+      // 1. Generate Question
+      const question = generateIntervalQuestion();
+      setCurrentQuestion(question);
+      
+      // 2. Play Question (Root then Note)
+      const now = Tone.now();
+      synth.current.triggerAttackRelease(question.root, "8n", now);
+      synth.current.triggerAttackRelease(question.note, "8n", now + 0.5);
+      
+      // 3. Wait 4s
+      await new Promise(r => setTimeout(r, 4000));
+      
+      if (!isRunning || !driveMode) return;
+
+      // 4. Play Answer (Harmonic) - Speech will be added in next step
+      synth.current.triggerAttackRelease([question.root, question.note], "4n");
+      
+      // 5. Wait 2s
+      await new Promise(r => setTimeout(r, 2000));
+      
+      if (isRunning && driveMode) {
+        playLoop();
+      }
+    };
+
+    if (started && driveMode) {
+      playLoop();
+    }
+
+    return () => {
+      isRunning = false;
+    };
+  }, [started, driveMode]);
 
   return (
     <div className="p-4 bg-neutral-900 text-white min-h-[300px] flex flex-col items-start gap-4">
@@ -41,6 +83,15 @@ export const EarTrainer: React.FC = () => {
             </label>
             {driveMode && <span className="text-xs text-blue-400 animate-pulse">Active</span>}
           </div>
+
+          {/* Current Question Display (Optional, useful for debug/visual feedback) */}
+          {currentQuestion && driveMode && (
+            <div className="p-4 bg-neutral-800 rounded-lg text-center">
+                <div className="text-sm text-neutral-500">Current Interval</div>
+                <div className="text-2xl font-bold">{currentQuestion.interval}</div>
+                <div className="text-xs text-neutral-600">{currentQuestion.root} -> {currentQuestion.note}</div>
+            </div>
+          )}
         </div>
       )}
     </div>

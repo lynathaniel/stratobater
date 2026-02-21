@@ -73,7 +73,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Initialize Tone.js synth`
 - [x] `feat: Implement interval generation logic`
 - [x] `feat: Create "Drive Mode" toggle UI`
-- [ ] `feat: Implement audio loop (Question -> Wait -> Answer)`
+- [x] `feat: Implement audio loop (Question -> Wait -> Answer)`
 - [ ] `feat: Add speech synthesis for answers`
 - [ ] `feat: Integrate Wake Lock API`
 
