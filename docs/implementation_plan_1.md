@@ -69,7 +69,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Implement visibility toggles (r/t)`
 
 ### Phase 4: Ear Trainer & Audio
-- [ ] `feat: Create EarTrainer component scaffolding`
+- [x] `feat: Create EarTrainer component scaffolding`
 - [ ] `feat: Initialize Tone.js synth`
 - [ ] `feat: Implement interval generation logic`
 - [ ] `feat: Create "Drive Mode" toggle UI`
