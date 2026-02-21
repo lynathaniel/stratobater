@@ -45,7 +45,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `chore: Install dev dependencies (tailwindcss, @tailwindcss/postcss, postcss, autoprefixer)`
 - [x] `chore: Initialize Tailwind CSS configuration`
 - [x] `feat: Configure Tailwind theme and paths`
-- [ ] `chore: Add basic Dockerfile for web`
+- [x] `chore: Add basic Dockerfile for web`
 - [ ] `chore: Add docker-compose.yml`
 
 ### Phase 2: Core State & Logic
