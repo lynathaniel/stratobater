@@ -70,7 +70,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 
 ### Phase 4: Ear Trainer & Audio
 - [x] `feat: Create EarTrainer component scaffolding`
-- [ ] `feat: Initialize Tone.js synth`
+- [x] `feat: Initialize Tone.js synth`
 - [ ] `feat: Implement interval generation logic`
 - [ ] `feat: Create "Drive Mode" toggle UI`
 - [ ] `feat: Implement audio loop (Question -> Wait -> Answer)`
