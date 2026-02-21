@@ -33,19 +33,52 @@
   - Pattern: Play Question -> 4s Pause -> Play/Speak Answer -> 2s Pause -> Loop.
   - **Crucial:** Integrate the `navigator.wakeLock` API to prevent mobile screen sleep.
 
-## 4. Implementation Instructions for Gemini CLI
+## 4. Actionable Implementation Plan
 
-**Phase 1: Project Structure & Scaffolding (TS)**
-> "Create the root directories: `web/`, `api/`, `docs/`. Initialize a Vite React TypeScript project inside `web/`. Install dependencies: `zustand`, `@tonaljs/tonal`, `tone`, `clsx`, `lucide-react`, `tailwind-merge`. Configure Tailwind CSS v4 using `@tailwindcss/postcss`."
+This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.md`. Each checkbox represents a single, isolated task or commit.
 
-**Phase 2: Core Logic (The 'Brain')**
-> "Create a Zustand store in `web/src/store/useStore.ts` with strict typing for `StoreState` (root, scale, tuning) and `Actions`. Write a utility in `web/src/utils/fretboard.ts` using Tonal.js that returns a 2D array of `FretData` representing the guitar neck (6 strings x 22 frets)."
+### Phase 1: Project Initialization & Configuration
+- [ ] `chore: Create directory structure (web/, api/)`
+- [ ] `chore: Initialize Vite React TypeScript project in web/`
+- [ ] `chore: Install core dependencies (zustand, clsx, lucide-react, tailwind-merge)`
+- [ ] `chore: Install music theory dependencies (@tonaljs/tonal, tone)`
+- [ ] `chore: Install dev dependencies (tailwindcss, @tailwindcss/postcss, postcss, autoprefixer)`
+- [ ] `chore: Initialize Tailwind CSS configuration`
+- [ ] `feat: Configure Tailwind theme and paths`
+- [ ] `chore: Add basic Dockerfile for web`
+- [ ] `chore: Add docker-compose.yml`
 
-**Phase 3: UI - Fretboard (TSX)**
-> "Build the `Fretboard.tsx` component. Use CSS Grid/Flexbox and Tailwind. Map over the 2D array. Implement the 'Note Circle' visual style where cells are transparent and notes are centered circles. Add keyboard listeners for `ArrowLeft`/`ArrowRight` (key change) and `r`/`t` (toggles)."
+### Phase 2: Core State & Logic
+- [ ] `feat: Create Zustand store file structure`
+- [ ] `feat: Define initial StoreState interface (root, scale, tuning)`
+- [ ] `feat: Implement basic store actions (setRoot, setScale)`
+- [ ] `feat: Create fretboard utility file`
+- [ ] `feat: Implement string tuning logic in utility`
+- [ ] `feat: Implement scale calculation logic using Tonal.js`
+- [ ] `feat: Implement fretboard data generation (2D array)`
 
-**Phase 4: Audio & Ear Trainer (TSX)**
-> "Create `EarTrainer.tsx`. Initialize a `Tone.PolySynth` on user interaction. Build the 'Drive Mode' toggle that starts a loop to play random intervals from a selected pool. implement logic: Play Question -> Wait -> Speak Answer -> Repeat. Add `navigator.wakeLock` handling."
+### Phase 3: Fretboard UI
+- [ ] `feat: Create Fretboard component scaffolding`
+- [ ] `feat: Render basic fretboard grid (css grid/flex)`
+- [ ] `feat: Style fretboard cells (fret wire, nut)`
+- [ ] `feat: Render note indicators (circles)`
+- [ ] `feat: Implement note coloring logic (Root vs Interval)`
+- [ ] `feat: Connect Fretboard to Zustand store`
+- [ ] `feat: Add horizontal scrolling for mobile`
+- [ ] `feat: Implement keyboard shortcuts (ArrowLeft/Right)`
+- [ ] `feat: Implement visibility toggles (r/t)`
 
-**Phase 5: Containerization**
-> "Create a multi-stage `web/Dockerfile`. Stage 1: `node:18-alpine` to build. Stage 2: `nginx:alpine` to serve `/dist` on port 8080. Create a `docker-compose.yml` in the root to orchestrate local dev."
+### Phase 4: Ear Trainer & Audio
+- [ ] `feat: Create EarTrainer component scaffolding`
+- [ ] `feat: Initialize Tone.js synth`
+- [ ] `feat: Implement interval generation logic`
+- [ ] `feat: Create "Drive Mode" toggle UI`
+- [ ] `feat: Implement audio loop (Question -> Wait -> Answer)`
+- [ ] `feat: Add speech synthesis for answers`
+- [ ] `feat: Integrate Wake Lock API`
+
+### Phase 5: Polish & Deployment Prep
+- [ ] `feat: Add responsive layout wrapper`
+- [ ] `feat: Add Lucide icons for UI controls`
+- [ ] `chore: Configure Nginx for production build`
+- [ ] `chore: Finalize Dockerfile multi-stage build`
