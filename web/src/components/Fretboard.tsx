@@ -2,6 +2,7 @@ import React from 'react';
 import { useStore } from '../store/useStore';
 import { getFretboard } from '../utils/fretboard';
 import clsx from 'clsx';
+import { Circle, Triangle } from 'lucide-react'; // Import Lucide icons
 
 const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const SCALES = ["major", "minor", "pentatonic major", "pentatonic minor", "blues", "dorian", "mixolydian", "lydian", "phrygian", "locrian"];
@@ -65,23 +66,25 @@ export const Fretboard: React.FC = () => {
             <button 
                 onClick={toggleShowRoots}
                 className={clsx(
-                    "px-4 py-2 rounded-md text-sm font-semibold transition-all border",
+                    "px-4 py-2 rounded-md text-sm font-semibold transition-all border flex items-center justify-center",
                     showRoots 
                         ? "bg-red-500/20 text-red-400 border-red-500/50 hover:bg-red-500/30" 
                         : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
                 )}
             >
+                <Circle size={16} className="mr-2" />
                 Roots (R)
             </button>
             <button 
                 onClick={toggleShowTriads}
                 className={clsx(
-                    "px-4 py-2 rounded-md text-sm font-semibold transition-all border",
+                    "px-4 py-2 rounded-md text-sm font-semibold transition-all border flex items-center justify-center",
                     showTriads 
                         ? "bg-blue-500/20 text-blue-400 border-blue-500/50 hover:bg-blue-500/30" 
                         : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
                 )}
             >
+                <Triangle size={16} className="mr-2" />
                 Triads (T)
             </button>
         </div>
