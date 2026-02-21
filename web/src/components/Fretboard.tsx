@@ -92,10 +92,9 @@ export const Fretboard: React.FC = () => {
 
       {/* Fretboard Container */}
       <div className="w-full overflow-x-auto pb-8 px-4 custom-scrollbar">
-        <div className="flex flex-col min-w-max border-l-4 border-neutral-400 bg-neutral-800/50 rounded-l-sm shadow-2xl">
-            {fretboardData.map((stringData, stringIndex) => (
-            <div key={stringIndex} className="flex relative group">
-                {/* String Line */}
+              <div className="flex flex-col min-w-max border-l-4 border-neutral-400 bg-neutral-800/50 rounded-l-sm shadow-2xl">
+                {fretboardData.slice().reverse().map((stringData, stringIndex) => (
+                  <div key={stringIndex} className="flex relative group">                {/* String Line */}
                 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-neutral-600 -translate-y-1/2 z-20 pointer-events-none shadow-sm" />
                 
                 {stringData.map((fret, fretIndex) => (
