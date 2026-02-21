@@ -22,21 +22,26 @@ export const Fretboard: React.FC = () => {
                   "w-14 h-12 border-r border-neutral-700 flex items-center justify-center relative z-10",
                   fretIndex === 0 
                     ? "w-16 bg-neutral-800 border-r-4 border-neutral-500" // Nut
-                    : "bg-transparent" // Frets
+                    : "bg-transparent"
                 )}
               >
-                 {/* Note Placeholder (will be replaced by Note Circle later) */}
-                 <span className="z-30 text-[10px] text-neutral-500 opacity-30 font-mono select-none">
-                   {fret.noteName}
-                 </span>
+                {/* Note Circle */}
+                {fret.inScale && (
+                  <div className={clsx(
+                    "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md z-30 transition-all duration-200 cursor-default select-none",
+                    "bg-neutral-400 text-neutral-900 ring-2 ring-neutral-900/50"
+                  )}>
+                    {fret.noteName}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         ))}
-        {/* Fret Numbers (Optional, can be added as a separate row or absolute) */}
+        {/* Fret Numbers */}
         <div className="flex pl-16">
             {Array.from({ length: 22 }).map((_, i) => (
-                <div key={i} className="w-14 text-center text-[10px] text-neutral-500 py-1">
+                <div key={i} className="w-14 text-center text-[10px] text-neutral-500 py-1 font-mono">
                     {[3, 5, 7, 9, 12, 15, 17, 19, 21].includes(i + 1) ? i + 1 : ''}
                 </div>
             ))}
