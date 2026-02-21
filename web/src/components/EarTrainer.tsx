@@ -3,6 +3,7 @@ import * as Tone from 'tone';
 
 export const EarTrainer: React.FC = () => {
   const [started, setStarted] = useState(false);
+  const [driveMode, setDriveMode] = useState(false);
   const synth = useRef<Tone.PolySynth | null>(null);
 
   const handleStart = async () => {
@@ -22,8 +23,24 @@ export const EarTrainer: React.FC = () => {
           Start Audio Engine
         </button>
       ) : (
-        <div className="px-4 py-2 bg-green-900/30 border border-green-500/50 text-green-400 rounded-md">
-          Audio Engine Ready
+        <div className="flex flex-col gap-4 w-full max-w-md">
+          <div className="px-4 py-2 bg-green-900/30 border border-green-500/50 text-green-400 rounded-md">
+            Audio Engine Ready
+          </div>
+          
+          <div className="flex items-center gap-3 p-4 bg-neutral-800 rounded-lg border border-neutral-700">
+            <input 
+              type="checkbox" 
+              id="driveMode" 
+              checked={driveMode} 
+              onChange={(e) => setDriveMode(e.target.checked)}
+              className="w-5 h-5 accent-blue-600 cursor-pointer"
+            />
+            <label htmlFor="driveMode" className="text-white font-medium select-none cursor-pointer flex-1">
+              Drive Mode (Hands-Free Loop)
+            </label>
+            {driveMode && <span className="text-xs text-blue-400 animate-pulse">Active</span>}
+          </div>
         </div>
       )}
     </div>

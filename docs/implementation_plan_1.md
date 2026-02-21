@@ -72,7 +72,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Create EarTrainer component scaffolding`
 - [x] `feat: Initialize Tone.js synth`
 - [x] `feat: Implement interval generation logic`
-- [ ] `feat: Create "Drive Mode" toggle UI`
+- [x] `feat: Create "Drive Mode" toggle UI`
 - [ ] `feat: Implement audio loop (Question -> Wait -> Answer)`
 - [ ] `feat: Add speech synthesis for answers`
 - [ ] `feat: Integrate Wake Lock API`
