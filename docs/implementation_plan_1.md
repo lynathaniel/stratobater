@@ -66,7 +66,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Connect Fretboard to Zustand store`
 - [x] `feat: Add horizontal scrolling for mobile`
 - [x] `feat: Implement keyboard shortcuts (ArrowLeft/Right)`
-- [ ] `feat: Implement visibility toggles (r/t)`
+- [x] `feat: Implement visibility toggles (r/t)`
 
 ### Phase 4: Ear Trainer & Audio
 - [ ] `feat: Create EarTrainer component scaffolding`
