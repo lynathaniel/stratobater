@@ -14,6 +14,33 @@ export const EarTrainer: React.FC = () => {
     setStarted(true);
   };
 
+  // Wake Lock Effect
+  useEffect(() => {
+    let wakeLock: any = null;
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await (navigator as any).wakeLock.request('screen');
+          console.log('Wake Lock active');
+        }
+      } catch (err: any) {
+        console.error(`${err.name}, ${err.message}`);
+      }
+    };
+
+    if (driveMode) {
+      requestWakeLock();
+    }
+
+    return () => {
+      if (wakeLock) {
+        wakeLock.release();
+        wakeLock = null;
+      }
+    };
+  }, [driveMode]);
+
   useEffect(() => {
     let isRunning = true;
 
@@ -56,7 +83,7 @@ export const EarTrainer: React.FC = () => {
 
     return () => {
       isRunning = false;
-      window.speechSynthesis.cancel(); // Cancel speech if stopped
+      window.speechSynthesis.cancel();
     };
   }, [started, driveMode]);
 
