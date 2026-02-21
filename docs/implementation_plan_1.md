@@ -4,13 +4,14 @@
 **Stratobater** is a specialized, progressive web application designed to bridge the gap between music theory visualization and ear training. It is optimized for both desktop and mobile use, specifically featuring a hands-free "Drive Mode" for aural practice.
 
 ## 2. Tech Stack & Infrastructure
-- **Frontend Framework:** React (via Vite)
+- **Frontend Framework:** React (via Vite) + **TypeScript**
 - **State Management:** Zustand
 - **Music Theory Engine:** `@tonaljs/tonal`
 - **Audio Engine:** `tone` (Tone.js)
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS (v4)
 - **Icons:** `lucide-react`
 - **Deployment:** Containerized via Docker (multi-stage with Nginx) for Google Cloud Run (port 8080).
+- **Structure:** Monorepo-lite (`web/` for frontend, `api/` for future backend).
 
 ## 3. Core Requirements (P0)
 
@@ -23,6 +24,7 @@
   - `[` and `]`: Cycle through the curated Scale Pool.
   - `r`: Toggle Root highlighting.
   - `t`: Toggle Triad highlighting.
+- **Visual Style:** Notes rendered as colored circles (Red=Root, Blue=Triad, Gray=Scale) on top of transparent fret cells (allowing string line to show through).
 
 ### Module 2: Ear Trainer
 - **Quiz Types:** Interval, Chord Quality, and Scale identification.
@@ -33,17 +35,17 @@
 
 ## 4. Implementation Instructions for Gemini CLI
 
-**Prompt 1: Scaffolding & Setup**
-> "Read STRATOBATER_SPEC.md. Initialize a Vite React project. Install dependencies: @tonaljs/tonal, tone, zustand, lucide-react, clsx, tailwind-merge. Setup Tailwind CSS. Create the standard React folder structure (components, store, utils)."
+**Phase 1: Project Structure & Scaffolding (TS)**
+> "Create the root directories: `web/`, `api/`, `docs/`. Initialize a Vite React TypeScript project inside `web/`. Install dependencies: `zustand`, `@tonaljs/tonal`, `tone`, `clsx`, `lucide-react`, `tailwind-merge`. Configure Tailwind CSS v4 using `@tailwindcss/postcss`."
 
-**Prompt 2: State & Theory Engine**
-> "Create a Zustand store in `src/store/useStore.js`. State must include: `root` (default 'C'), `scaleType` (default 'major pentatonic'), `tuning` (default standard), and `activeModule`. Next, write a utility in `src/utils/fretboard.js` using Tonal.js that returns a 2D array representing the guitar neck (6 strings x 22 frets) with note, exact octave, and interval metadata for each fret."
+**Phase 2: Core Logic (The 'Brain')**
+> "Create a Zustand store in `web/src/store/useStore.ts` with strict typing for `StoreState` (root, scale, tuning) and `Actions`. Write a utility in `web/src/utils/fretboard.ts` using Tonal.js that returns a 2D array of `FretData` representing the guitar neck (6 strings x 22 frets)."
 
-**Prompt 3: UI - Fretboard**
-> "Build the Fretboard component using CSS Grid/Flexbox and Tailwind. It must map over the 2D array from our theory engine. Include the logic to highlight the background color of frets if their interval is a root (e.g., '1P') or triad (e.g., '3M', '5P'). Make the container scrollable horizontally for mobile."
+**Phase 3: UI - Fretboard (TSX)**
+> "Build the `Fretboard.tsx` component. Use CSS Grid/Flexbox and Tailwind. Map over the 2D array. Implement the 'Note Circle' visual style where cells are transparent and notes are centered circles. Add keyboard listeners for `ArrowLeft`/`ArrowRight` (key change) and `r`/`t` (toggles)."
 
-**Prompt 4: Audio & Ear Trainer**
-> "Create the EarTrainer component. Initialize a `Tone.PolySynth` on user interaction. Build the 'Drive Mode' toggle that starts a `Tone.Loop` to play random intervals from a selected pool. Include the logic to request a Wake Lock from the browser when Drive Mode starts."
+**Phase 4: Audio & Ear Trainer (TSX)**
+> "Create `EarTrainer.tsx`. Initialize a `Tone.PolySynth` on user interaction. Build the 'Drive Mode' toggle that starts a loop to play random intervals from a selected pool. implement logic: Play Question -> Wait -> Speak Answer -> Repeat. Add `navigator.wakeLock` handling."
 
-**Prompt 5: Containerization**
-> "Create a multi-stage `Dockerfile` in the root. Stage 1 should use `node:18-alpine` to build the Vite app. Stage 2 should use `nginx:alpine` to serve the `/dist` folder on port 8080. Generate a basic `nginx.conf` to handle React client-side routing."
+**Phase 5: Containerization**
+> "Create a multi-stage `web/Dockerfile`. Stage 1: `node:18-alpine` to build. Stage 2: `nginx:alpine` to serve `/dist` on port 8080. Create a `docker-compose.yml` in the root to orchestrate local dev."
