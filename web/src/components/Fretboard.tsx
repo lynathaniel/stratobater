@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { Circle, Triangle } from 'lucide-react'; // Import Lucide icons
 
 const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-const SCALES = ["major", "minor", "pentatonic major", "pentatonic minor", "blues", "dorian", "mixolydian", "lydian", "phrygian", "locrian"];
+const SCALES = ["major", "minor", "major pentatonic", "minor pentatonic", "blues", "dorian", "mixolydian", "lydian", "phrygian", "locrian"];
 
 export const Fretboard: React.FC = () => {
   const { 
