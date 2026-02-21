@@ -78,7 +78,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Integrate Wake Lock API`
 
 ### Phase 5: Polish & Deployment Prep
-- [ ] `feat: Add responsive layout wrapper`
+- [x] `feat: Add responsive layout wrapper`
 - [ ] `feat: Add Lucide icons for UI controls`
 - [ ] `chore: Configure Nginx for production build`
 - [ ] `chore: Finalize Dockerfile multi-stage build`
