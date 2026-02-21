@@ -59,7 +59,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 
 ### Phase 3: Fretboard UI
 - [x] `feat: Create Fretboard component scaffolding`
-- [ ] `feat: Render basic fretboard grid (css grid/flex)`
+- [x] `feat: Render basic fretboard grid (css grid/flex)`
 - [ ] `feat: Style fretboard cells (fret wire, nut)`
 - [ ] `feat: Render note indicators (circles)`
 - [ ] `feat: Implement note coloring logic (Root vs Interval)`
