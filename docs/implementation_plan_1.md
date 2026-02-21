@@ -46,7 +46,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `chore: Initialize Tailwind CSS configuration`
 - [x] `feat: Configure Tailwind theme and paths`
 - [x] `chore: Add basic Dockerfile for web`
-- [ ] `chore: Add docker-compose.yml`
+- [x] `chore: Add docker-compose.yml`
 
 ### Phase 2: Core State & Logic
 - [ ] `feat: Create Zustand store file structure`
