@@ -3,9 +3,45 @@ import { useStore } from '../store/useStore';
 import { getFretboard } from '../utils/fretboard';
 import clsx from 'clsx';
 
+const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const SCALES = ["major", "minor", "pentatonic major", "pentatonic minor", "blues", "dorian", "mixolydian", "lydian", "phrygian", "locrian"];
+
 export const Fretboard: React.FC = () => {
-  const { root, scaleType, tuning, showRoots, showTriads } = useStore();
+  const { 
+    root, scaleType, tuning, showRoots, showTriads,
+    setRoot, setScaleType, toggleShowRoots, toggleShowTriads
+  } = useStore();
+  
   const fretboardData = getFretboard(root, scaleType, tuning);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        const index = KEYS.indexOf(root);
+        const next = KEYS[(index + 1) % KEYS.length];
+        setRoot(next);
+      } else if (e.key === "ArrowLeft") {
+        const index = KEYS.indexOf(root);
+        const prev = KEYS[(index - 1 + KEYS.length) % KEYS.length];
+        setRoot(prev);
+      } else if (e.key === "]") {
+        const index = SCALES.indexOf(scaleType);
+        const next = SCALES[(index + 1) % SCALES.length];
+        setScaleType(next);
+      } else if (e.key === "[") {
+        const index = SCALES.indexOf(scaleType);
+        const prev = SCALES[(index - 1 + SCALES.length) % SCALES.length];
+        setScaleType(prev);
+      } else if (e.key.toLowerCase() === "r") {
+        toggleShowRoots();
+      } else if (e.key.toLowerCase() === "t") {
+        toggleShowTriads();
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [root, scaleType, setRoot, setScaleType, toggleShowRoots, toggleShowTriads]);
 
   const getNoteStyle = (fret: { isRoot: boolean; isTriad: boolean }) => {
     if (fret.isRoot && showRoots) {

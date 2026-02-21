@@ -65,7 +65,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Implement note coloring logic (Root vs Interval)`
 - [x] `feat: Connect Fretboard to Zustand store`
 - [x] `feat: Add horizontal scrolling for mobile`
-- [ ] `feat: Implement keyboard shortcuts (ArrowLeft/Right)`
+- [x] `feat: Implement keyboard shortcuts (ArrowLeft/Right)`
 - [ ] `feat: Implement visibility toggles (r/t)`
 
 ### Phase 4: Ear Trainer & Audio
