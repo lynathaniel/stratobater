@@ -4,8 +4,18 @@ import { getFretboard } from '../utils/fretboard';
 import clsx from 'clsx';
 
 export const Fretboard: React.FC = () => {
-  const { root, scaleType, tuning } = useStore();
+  const { root, scaleType, tuning, showRoots, showTriads } = useStore();
   const fretboardData = getFretboard(root, scaleType, tuning);
+
+  const getNoteStyle = (fret: { isRoot: boolean; isTriad: boolean }) => {
+    if (fret.isRoot && showRoots) {
+      return "bg-red-500 text-white ring-red-900/50 scale-110 z-40";
+    }
+    if (fret.isTriad && showTriads) {
+      return "bg-blue-500 text-white ring-blue-900/50 z-30";
+    }
+    return "bg-neutral-400 text-neutral-900 ring-neutral-900/50 opacity-80 hover:opacity-100";
+  };
 
   return (
     <div className="w-full overflow-x-auto p-8 bg-neutral-900 min-h-[300px] flex items-center">
@@ -28,8 +38,8 @@ export const Fretboard: React.FC = () => {
                 {/* Note Circle */}
                 {fret.inScale && (
                   <div className={clsx(
-                    "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md z-30 transition-all duration-200 cursor-default select-none",
-                    "bg-neutral-400 text-neutral-900 ring-2 ring-neutral-900/50"
+                    "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-all duration-200 cursor-default select-none ring-2",
+                    getNoteStyle(fret)
                   )}>
                     {fret.noteName}
                   </div>

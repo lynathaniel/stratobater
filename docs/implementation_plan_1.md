@@ -62,7 +62,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Render basic fretboard grid (css grid/flex)`
 - [x] `feat: Style fretboard cells (fret wire, nut)`
 - [x] `feat: Render note indicators (circles)`
-- [ ] `feat: Implement note coloring logic (Root vs Interval)`
+- [x] `feat: Implement note coloring logic (Root vs Interval)`
 - [ ] `feat: Connect Fretboard to Zustand store`
 - [ ] `feat: Add horizontal scrolling for mobile`
 - [ ] `feat: Implement keyboard shortcuts (ArrowLeft/Right)`
