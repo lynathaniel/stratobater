@@ -93,34 +93,38 @@ export const Fretboard: React.FC = () => {
       {/* Fretboard Container */}
       <div className="w-full overflow-x-auto pb-8 px-4 custom-scrollbar">
               <div className="flex flex-col min-w-max border-l-4 border-neutral-400 bg-neutral-800/50 rounded-l-sm shadow-2xl">
-                {fretboardData.slice().reverse().map((stringData, stringIndex) => (
-                  <div key={stringIndex} className="flex relative group">                {/* String Line */}
-                <div className="absolute top-1/2 left-0 w-full h-[2px] bg-neutral-600 -translate-y-1/2 z-20 pointer-events-none shadow-sm" />
-                
-                {stringData.map((fret, fretIndex) => (
-                <div 
-                    key={fretIndex} 
-                    className={clsx(
-                    "w-14 h-12 border-r border-neutral-700 flex items-center justify-center relative z-10",
-                    fretIndex === 0 
-                        ? "w-16 bg-neutral-800 border-r-4 border-neutral-500" // Nut
-                        : "bg-transparent"
-                    )}
-                >
-                    {/* Note Circle */}
-                    {fret.inScale && (
-                    <div className={clsx(
-                        "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-all duration-200 cursor-default select-none ring-2",
-                        getNoteStyle(fret)
-                    )}>
-                        {fret.noteName}
-                    </div>
-                    )}
-                </div>
-                ))}
-            </div>
-            ))}
-            {/* Fret Numbers */}
+                            {fretboardData.slice().reverse().map((stringData, stringRenderIndex) => {
+                              const isOpenHighE = stringData[0].note.startsWith('E4'); // Check if open note is E4 (High E)
+                              
+                              return (
+                                <div key={stringRenderIndex} className="flex relative group">
+                                  {/* String Line */}
+                                  <div className="absolute top-1/2 left-0 w-full h-[2px] bg-neutral-600 -translate-y-1/2 z-0 pointer-events-none shadow-sm" />
+                                  
+                                  {stringData.map((fret, fretIndex) => (
+                                    <div 
+                                      key={fretIndex} 
+                                      className={clsx(
+                                        "w-14 h-12 border-r border-neutral-700 flex items-center justify-center relative z-10",
+                                        fretIndex === 0 
+                                          ? "w-16 bg-neutral-800 border-r-4 border-neutral-500" // Nut
+                                          : "bg-transparent"
+                                      )}
+                                    >
+                                      {/* Note Circle */}
+                                      {fret.inScale && (
+                                        <div className={clsx(
+                                          "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shadow-md transition-all duration-200 cursor-default select-none ring-2",
+                                          getNoteStyle(fret)
+                                        )}>
+                                          {isOpenHighE ? fret.noteName.toLowerCase() : fret.noteName}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              );
+                            })}            {/* Fret Numbers */}
             <div className="flex pl-16">
                 {Array.from({ length: 22 }).map((_, i) => (
                     <div key={i} className="w-14 text-center text-[10px] text-neutral-500 py-1 font-mono">
