@@ -38,7 +38,7 @@
 This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.md`. Each checkbox represents a single, isolated task or commit.
 
 ### Phase 1: Project Initialization & Configuration
-- [ ] `chore: Create directory structure (web/, api/)`
+- [x] `chore: Create directory structure (web/, api/)`
 - [ ] `chore: Initialize Vite React TypeScript project in web/`
 - [ ] `chore: Install core dependencies (zustand, clsx, lucide-react, tailwind-merge)`
 - [ ] `chore: Install music theory dependencies (@tonaljs/tonal, tone)`
