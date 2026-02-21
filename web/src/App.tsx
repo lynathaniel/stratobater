@@ -1,4 +1,3 @@
-import React from 'react';
 import { Fretboard } from './components/Fretboard';
 import { EarTrainer } from './components/EarTrainer';
 
