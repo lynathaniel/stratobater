@@ -41,7 +41,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `chore: Create directory structure (web/, api/)`
 - [x] `chore: Initialize Vite React TypeScript project in web/`
 - [x] `chore: Install core dependencies (zustand, clsx, lucide-react, tailwind-merge)`
-- [ ] `chore: Install music theory dependencies (@tonaljs/tonal, tone)`
+- [x] `chore: Install music theory dependencies (@tonaljs/tonal, tone)`
 - [ ] `chore: Install dev dependencies (tailwindcss, @tailwindcss/postcss, postcss, autoprefixer)`
 - [ ] `chore: Initialize Tailwind CSS configuration`
 - [ ] `feat: Configure Tailwind theme and paths`
