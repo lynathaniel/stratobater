@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
-import { generateIntervalQuestion, IntervalQuestion } from '../utils/earTrainer';
+import { generateIntervalQuestion, IntervalQuestion, INTERVAL_NAMES } from '../utils/earTrainer';
 
 export const EarTrainer: React.FC = () => {
   const [started, setStarted] = useState(false);
@@ -34,9 +34,14 @@ export const EarTrainer: React.FC = () => {
       
       if (!isRunning || !driveMode) return;
 
-      // 4. Play Answer (Harmonic) - Speech will be added in next step
+      // 4. Play Answer (Harmonic) + Speak
       synth.current.triggerAttackRelease([question.root, question.note], "4n");
       
+      const text = INTERVAL_NAMES[question.interval] || question.interval;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      window.speechSynthesis.speak(utterance);
+
       // 5. Wait 2s
       await new Promise(r => setTimeout(r, 2000));
       
@@ -51,6 +56,7 @@ export const EarTrainer: React.FC = () => {
 
     return () => {
       isRunning = false;
+      window.speechSynthesis.cancel(); // Cancel speech if stopped
     };
   }, [started, driveMode]);
 
@@ -84,12 +90,12 @@ export const EarTrainer: React.FC = () => {
             {driveMode && <span className="text-xs text-blue-400 animate-pulse">Active</span>}
           </div>
 
-          {/* Current Question Display (Optional, useful for debug/visual feedback) */}
           {currentQuestion && driveMode && (
-            <div className="p-4 bg-neutral-800 rounded-lg text-center">
-                <div className="text-sm text-neutral-500">Current Interval</div>
-                <div className="text-2xl font-bold">{currentQuestion.interval}</div>
-                <div className="text-xs text-neutral-600">{currentQuestion.root} -> {currentQuestion.note}</div>
+            <div className="p-4 bg-neutral-800 rounded-lg text-center border border-neutral-700">
+                <div className="text-sm text-neutral-500 mb-1">Current Interval</div>
+                <div className="text-2xl font-bold text-blue-400 mb-2">{currentQuestion.interval}</div>
+                <div className="text-lg font-medium">{INTERVAL_NAMES[currentQuestion.interval]}</div>
+                <div className="text-xs text-neutral-600 mt-2">{currentQuestion.root} → {currentQuestion.note}</div>
             </div>
           )}
         </div>

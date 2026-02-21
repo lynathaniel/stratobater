@@ -74,7 +74,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `feat: Implement interval generation logic`
 - [x] `feat: Create "Drive Mode" toggle UI`
 - [x] `feat: Implement audio loop (Question -> Wait -> Answer)`
-- [ ] `feat: Add speech synthesis for answers`
+- [x] `feat: Add speech synthesis for answers`
 - [ ] `feat: Integrate Wake Lock API`
 
 ### Phase 5: Polish & Deployment Prep
