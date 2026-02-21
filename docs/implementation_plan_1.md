@@ -49,7 +49,7 @@ This plan follows the **Micro-Atomic Commit** workflow defined in `CONTRIBUTING.
 - [x] `chore: Add docker-compose.yml`
 
 ### Phase 2: Core State & Logic
-- [ ] `feat: Create Zustand store file structure`
+- [x] `feat: Create Zustand store file structure`
 - [ ] `feat: Define initial StoreState interface (root, scale, tuning)`
 - [ ] `feat: Implement basic store actions (setRoot, setScale)`
 - [ ] `feat: Create fretboard utility file`
