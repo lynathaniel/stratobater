@@ -205,7 +205,7 @@ describe('Fretboard component', () => {
 
   it('displays fret numbers at correct positions', () => {
     render(<Fretboard />);
-    const fretNumberRow = document.querySelector('div[class*="bg-neutral-900"]');
+    const fretNumberRow = document.querySelector('div[class*="bg-app-bg"]');
     expect(fretNumberRow).not.toBeNull();
     const cells = fretNumberRow?.children;
     expect(cells?.length).toBe(22);
