@@ -1,6 +1,12 @@
 import { Note, Interval, Scale } from '@tonaljs/tonal';
 
 export const getStringNotes = (openNote: string, fretCount: number = 22): string[] => {
+  // Validate using Note.chroma: returns number (0-11) for valid notes, NaN for invalid
+  const chroma = Note.chroma(openNote);
+  if (isNaN(chroma)) {
+    throw new Error(`Invalid open note: ${openNote}`);
+  }
+
   return Array.from({ length: fretCount + 1 }, (_, i) => {
     const interval = Interval.fromSemitones(i);
     return Note.transpose(openNote, interval);

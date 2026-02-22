@@ -122,7 +122,7 @@ export const Fretboard: React.FC = () => {
                                     <div
                                       key={fretIndex}
                                       className={clsx(
-                                        "h-12 flex items-center justify-center relative",
+                                        "fret-cell h-12 flex items-center justify-center relative",
                                         fretIndex === 0
                                           ? "w-16 flex-none border-r-4 border-neutral-400"
                                           : "flex-1"
