@@ -30,6 +30,7 @@ All commit messages must follow this format:
 -   **chore**: Maintenance, build config, or dependency updates (e.g., "Setup Vite")
 -   **style**: Code style changes (formatting, missing semi-colons, etc.)
 -   **refactor**: A code change that neither fixes a bug nor adds a feature
+-   **test**: Adding or updating tests (e.g., "Add Fretboard component tests")
 
 ### Examples of Granularity
 
