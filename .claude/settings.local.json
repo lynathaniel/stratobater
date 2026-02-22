@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(git add:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vitest:*)",
+      "Bash(cd web:*)"
+    ]
+  }
+}
