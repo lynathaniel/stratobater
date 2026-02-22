@@ -30,7 +30,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const isCurrentApp = (path: string) => location === path;
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-white flex flex-col">
+    <div className="min-h-screen bg-app-bg text-white flex flex-col">
       <header className="h-16 border-b border-neutral-700 flex items-center justify-between px-4 shrink-0 relative z-30">
         <Link href="/" className="text-4xl font-bold no-underline">
           Stratobater
