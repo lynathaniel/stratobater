@@ -53,13 +53,8 @@ export const getFretboard = (
       if (inScale) {
         interval = scaleIntervals[index];
         isRoot = interval === '1P';
-        // Triad usually 1, 3, 5. 
-        // 3rd is typically 3M or 3m. 5th is 5P (or 5d in dim).
-        // We'll define triad as 1P and the 3rd and 5th degrees of the scale.
-        // In 7-note scale, these are usually indices 0, 2, 4.
-        const isThird = index === 2;
-        const isFifth = index === 4;
-        isTriad = isRoot || isThird || isFifth;
+        // A note is part of the tonic triad if its interval from the scale root is a 1P, 3M, 3m, or 5P.
+        isTriad = ['1P', '3M', '3m', '5P'].includes(interval || '');
       }
 
       return {

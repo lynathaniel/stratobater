@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
 import { generateIntervalQuestion, INTERVAL_NAMES, type IntervalQuestion } from '../utils/earTrainer';
+import { Link } from 'wouter';
 
 export const EarTrainer: React.FC = () => {
   const [started, setStarted] = useState(false);
