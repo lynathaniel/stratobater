@@ -20,6 +20,8 @@ All commit messages must follow this format:
 
 ```text
 [<type>]: <1 sentence description>
+
+[optional body]
 ```
 
 ### Allowed Types
@@ -31,6 +33,20 @@ All commit messages must follow this format:
 -   **style**: Code style changes (formatting, missing semi-colons, etc.)
 -   **refactor**: A code change that neither fixes a bug nor adds a feature
 -   **test**: Adding or updating tests (e.g., "Add Fretboard component tests")
+
+### Purpose Line for Feature, Bug Fix, Style, and Refactor Commits
+
+For commits of type `feat`, `fix`, `style`, and `refactor`, include a blank line after the subject and add a line starting with `purpose: ` that explains the rationale or goal of the change. This helps provide context for reviewers and future maintainers.
+
+Example:
+
+```text
+refactor: extract subcomponents into their own classes
+
+purpose: this will simplify the main page simpler and easier to understand at a glance
+```
+
+The `purpose:` line should be concise but informative (one short phrase or sentence). It should answer "why?" not "what?" (the "what" is already in the subject).
 
 ### Examples of Granularity
 
