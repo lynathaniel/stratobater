@@ -43,7 +43,7 @@ const FretboardControls: React.FC<FretboardControlsProps> = ({
   const getLabelModeClassName = () => {
     switch (noteLabelMode) {
       case 'noteNames':
-        return "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200";
+        return "bg-[#FFB936]/20 text-[#FFB936] border-[#FFB936]/50 hover:bg-[#FFB936]/30";
       case 'scaleDegrees':
         return "bg-purple-500/20 text-purple-400 border-purple-500/50 hover:bg-purple-500/30";
       case 'none':
@@ -187,7 +187,12 @@ const FretboardGrid: React.FC<FretboardGridProps> = ({ fretboardData, showRoots,
                 title={noteLabelMode === 'none' ? `${fret.noteName}${fret.scaleDegree ? ` (degree ${fret.scaleDegree})` : ''}` : undefined}
               >
                 {noteLabelMode === 'noteNames' && fret.noteName}
-                {noteLabelMode === 'scaleDegrees' && fret.scaleDegree}
+                {noteLabelMode === 'scaleDegrees' && fret.scaleDegree && (
+                  <>
+                    {fret.accidentalPrefix}
+                    {fret.scaleDegree}
+                  </>
+                )}
                 {noteLabelMode === 'none' && null}
               </div>
             )}
@@ -222,7 +227,7 @@ export const Fretboard: React.FC = () => {
     setNoteLabelMode,
   } = useStore();
 
-  const fretboardData = getFretboard(root, scaleType, tuning);
+  const fretboardData = getFretboard(root, scaleType, tuning, 22);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
