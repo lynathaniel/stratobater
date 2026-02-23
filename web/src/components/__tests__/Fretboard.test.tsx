@@ -135,7 +135,7 @@ describe('Fretboard component', () => {
     expect(fret15Circle).toHaveClass('bg-blue-500');
 
     // Root C should still be red
-    let fret8Circle = rows[5].querySelectorAll('.fret-cell')[8].querySelector('.rounded-full');
+    const fret8Circle = rows[5].querySelectorAll('.fret-cell')[8].querySelector('.rounded-full');
     expect(fret8Circle).toHaveClass('bg-red-500');
     expect(fret8Circle).not.toHaveClass('bg-blue-500');
 
@@ -205,7 +205,7 @@ describe('Fretboard component', () => {
 
   it('displays fret numbers at correct positions', () => {
     render(<Fretboard />);
-    const fretNumberRow = document.querySelector('div[class*="bg-app-bg"]');
+    const fretNumberRow = document.querySelector('div.flex.pl-16.bg-neutral-900');
     expect(fretNumberRow).not.toBeNull();
     const cells = fretNumberRow?.children;
     expect(cells?.length).toBe(22);

@@ -3,7 +3,6 @@ import { useStore } from '../store/useStore';
 import type { FretData, NoteLabelMode } from '../utils/fretboard';
 import { getFretboard } from '../utils/fretboard';
 import clsx from 'clsx';
-import { Link } from 'wouter';
 import { Circle, Triangle, Type } from 'lucide-react';
 
 const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -124,7 +123,7 @@ interface FretNumbersProps {
 
 const FretNumbers: React.FC<FretNumbersProps> = ({ fretCount = 22 }) => {
   return (
-    <div className="flex pl-16 bg-app-bg">
+    <div className="flex pl-16 bg-neutral-900">
       {Array.from({ length: fretCount }).map((_, i) => (
         <div key={i} className="flex-1 text-center text-sm font-bold text-neutral-500 py-1 font-mono">
           {[1, 3, 5, 7, 9, 12, 15, 17, 19, 21].includes(i + 1) ? i + 1 : ''}
@@ -199,11 +198,11 @@ const FretboardGrid: React.FC<FretboardGridProps> = ({ fretboardData, showRoots,
   };
 
   return (
-    <div className="flex flex-col flex-1 rounded-l-sm shadow-2xl bg-fretboard-bg">
+    <div className="flex flex-col flex-1 rounded-l-sm shadow-2xl bg-neutral-900">
       {fretboardData.slice().reverse().map((stringData, idx) => (
         <StringRow key={idx} stringData={stringData} stringIndex={idx} />
       ))}
-      <FretNumbers fretCount={fretCount} />
+          <FretNumbers fretCount={fretCount} />
     </div>
   );
 };
@@ -248,17 +247,15 @@ export const Fretboard: React.FC = () => {
       } else if (e.key.toLowerCase() === "t") {
         toggleShowTriads();
       } else if (e.key.toLowerCase() === "l") {
-        setNoteLabelMode(mode => {
-          const modes: NoteLabelMode[] = ['noteNames', 'scaleDegrees', 'none'];
-          const currentIndex = modes.indexOf(mode);
-          return modes[(currentIndex + 1) % modes.length];
-        });
+        const modes: NoteLabelMode[] = ['noteNames', 'scaleDegrees', 'none'];
+        const currentIndex = modes.indexOf(noteLabelMode);
+        setNoteLabelMode(modes[(currentIndex + 1) % modes.length]);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [root, scaleType, setRoot, setScaleType, toggleShowRoots, toggleShowTriads]);
+  }, [root, scaleType, setRoot, setScaleType, toggleShowRoots, toggleShowTriads, setNoteLabelMode, noteLabelMode]);
 
   return (
     <div className="w-full flex flex-col flex-1">
@@ -270,11 +267,11 @@ export const Fretboard: React.FC = () => {
         noteLabelMode={noteLabelMode}
         onToggleRoots={toggleShowRoots}
         onToggleTriads={toggleShowTriads}
-        onCycleLabelMode={() => setNoteLabelMode(mode => {
+        onCycleLabelMode={() => {
           const modes: NoteLabelMode[] = ['noteNames', 'scaleDegrees', 'none'];
-          const currentIndex = modes.indexOf(mode);
-          return modes[(currentIndex + 1) % modes.length];
-        })}
+          const currentIndex = modes.indexOf(noteLabelMode);
+          setNoteLabelMode(modes[(currentIndex + 1) % modes.length]);
+        }}
       />
       <div className="w-full overflow-x-auto pb-8 custom-scrollbar">
         <div className="flex">

@@ -1,4 +1,4 @@
-import { Router, Route } from 'wouter';
+import { Router, Route, Redirect } from 'wouter';
 import { MainLayout } from './components/MainLayout';
 import { Landing } from './pages/Landing';
 import { Fretboard } from './components/Fretboard';
@@ -11,7 +11,7 @@ function App() {
         <Route path="/" component={Landing} />
         <Route path="/fretboard-visualizer" component={Fretboard} />
         <Route path="/ear-trainer" component={EarTrainer} />
-        <Route path="*" redirect="/" />
+        <Redirect to="/" />
       </MainLayout>
     </Router>
   );

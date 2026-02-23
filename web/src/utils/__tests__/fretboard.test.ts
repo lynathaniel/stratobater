@@ -31,7 +31,7 @@ const expectedScaleNotes: Record<string, string[]> = {
   'A-locrian': ['A', 'Bb', 'C', 'D', 'Eb', 'F', 'G'],
 };
 
-const STANDARD_TUNING = ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'] as const;
+const STANDARD_TUNING = ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'];
 const FRET_COUNT = 22;
 
 describe('getStringNotes', () => {

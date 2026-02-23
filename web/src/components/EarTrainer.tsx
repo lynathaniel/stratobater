@@ -1,7 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as Tone from 'tone';
 import { generateIntervalQuestion, INTERVAL_NAMES, type IntervalQuestion } from '../utils/earTrainer';
-import { Link } from 'wouter';
+
+interface SimpleWakeLockSentinel {
+  release: () => void;
+}
+
+interface NavigatorWithWakeLock {
+  wakeLock?: {
+    request(signal: 'screen'): Promise<SimpleWakeLockSentinel>;
+  };
+}
 
 export const EarTrainer: React.FC = () => {
   const [started, setStarted] = useState(false);
@@ -17,16 +26,23 @@ export const EarTrainer: React.FC = () => {
 
   // Wake Lock Effect
   useEffect(() => {
-    let wakeLock: any = null;
+    let wakeLock: SimpleWakeLockSentinel | null = null;
 
     const requestWakeLock = async () => {
       try {
         if ('wakeLock' in navigator) {
-          wakeLock = await (navigator as any).wakeLock.request('screen');
-          console.log('Wake Lock active');
+          const nav = navigator as NavigatorWithWakeLock;
+          if (nav.wakeLock) {
+            wakeLock = await nav.wakeLock.request('screen');
+            console.log('Wake Lock active');
+          }
         }
-      } catch (err: any) {
-        console.error(`${err.name}, ${err.message}`);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error(`${err.name}, ${err.message}`);
+        } else {
+          console.error('Unknown error:', err);
+        }
       }
     };
 
