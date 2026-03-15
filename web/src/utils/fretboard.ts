@@ -15,9 +15,9 @@ export const getPreferredNoteName = (pc: string, preference: 'flat' | 'sharp'): 
 /** Get accidental prefix for a scale degree based on interval quality */
 export const getAccidentalPrefix = (interval: string | null): string => {
   if (!interval) return '';
-  const quality = interval.slice(-1); // 'P','M','m','a','d'
+  const quality = interval.slice(-1);
   if (quality === 'm' || quality === 'd') return 'b';
-  if (quality === 'a') return '#';
+  if (quality === 'a' || quality === 'A') return '#'; // Check both lowercase and uppercase for augmented
   return '';
 };
 
