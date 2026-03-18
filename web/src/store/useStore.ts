@@ -3,6 +3,15 @@ import { persist } from 'zustand/middleware';
 
 export type NoteLabelMode = 'noteNames' | 'scaleDegrees' | 'none';
 
+export type ChordExtension = '6th' | '7th' | '9th' | '11th' | '13th';
+
+export interface RomanNumeralButton {
+  degree: number;        // 1-7 representing scale degree
+  roman: string;         // 'I', 'ii', etc.
+  quality: 'major' | 'minor' | 'diminished';
+  qualitySymbol: string; // Musical symbols: '△', '-', '°'
+}
+
 // New data structure for configurable items with visibility and ordering
 export interface ConfigurableItem {
   id: string;
@@ -57,10 +66,14 @@ export interface StoreState {
   tuning: string[];
   showRoots: boolean;
   showTriads: boolean;
+  showChordMode: boolean;
   noteLabelMode: NoteLabelMode;
   // New state for configurable items
   keyItems: ConfigurableItem[];
   scaleItems: ConfigurableItem[];
+  // Chord visualization state
+  selectedRomanDegree: number | null;
+  chordExtension: ChordExtension | null;
 }
 
 export interface StoreActions {
@@ -69,6 +82,7 @@ export interface StoreActions {
   setTuning: (tuning: string[]) => void;
   toggleShowRoots: () => void;
   toggleShowTriads: () => void;
+  toggleShowChordMode: () => void;
   setNoteLabelMode: (mode: NoteLabelMode) => void;
   // New actions for configurable items
   setSelectedKey: (key: string) => void;
@@ -83,6 +97,9 @@ export interface StoreActions {
   resetScaleOrder: () => void;
   resetKeys: () => void;
   resetScales: () => void;
+  // Chord visualization actions
+  setSelectedRomanDegree: (degree: number | null) => void;
+  setChordExtension: (extension: ChordExtension | null) => void;
 }
 
 export const useStore = create<StoreState & StoreActions>()(
@@ -93,14 +110,18 @@ export const useStore = create<StoreState & StoreActions>()(
   tuning: ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'],
   showRoots: true,
   showTriads: false,
+  showChordMode: false,
   noteLabelMode: 'noteNames',
   keyItems: getInitialKeyItems(),
   scaleItems: getInitialScaleItems(),
+  selectedRomanDegree: 1,
+  chordExtension: null,
   setRoot: (root: string) => set({ root }),
   setScaleType: (scaleType: string) => set({ scaleType }),
   setTuning: (tuning: string[]) => set({ tuning }),
   toggleShowRoots: () => set((state) => ({ showRoots: !state.showRoots })),
   toggleShowTriads: () => set((state) => ({ showTriads: !state.showTriads })),
+  toggleShowChordMode: () => set((state) => ({ showChordMode: !state.showChordMode })),
   setNoteLabelMode: (noteLabelMode: NoteLabelMode) => set({ noteLabelMode }),
   // New actions for configurable items
   setSelectedKey: (key: string) => set((state) => ({
@@ -355,9 +376,32 @@ export const useStore = create<StoreState & StoreActions>()(
       isCurrent: scale === 'Major'
     }))
   })),
+  // Chord visualization actions
+  setSelectedRomanDegree: (degree: number | null) => set({ selectedRomanDegree: degree }),
+  setChordExtension: (extension: ChordExtension | null) => set((state) => ({
+    chordExtension: state.chordExtension === extension ? null : extension
+  })),
   }),
   {
     name: 'stratobater-storage',
+    version: 5,
+    migrate: (persistedState: any, version: number) => {
+      if (version === 1) {
+        persistedState.showChordMode = persistedState.showChordMode ?? false;
+      }
+      // Convert 'none' extension to null (toggleable behavior)
+      if (persistedState.chordExtension === 'none') {
+        persistedState.chordExtension = null;
+      }
+      if (persistedState.chordExtension === 'triad') {
+        persistedState.chordExtension = null;
+      }
+      // Ensure selectedRomanDegree is always set (default to 1 if null)
+      if (!persistedState.selectedRomanDegree) {
+        persistedState.selectedRomanDegree = 1;
+      }
+      return persistedState;
+    },
     partialize: (state) => ({
       keyItems: state.keyItems,
       scaleItems: state.scaleItems,
@@ -365,7 +409,10 @@ export const useStore = create<StoreState & StoreActions>()(
       scaleType: state.scaleType,
       showRoots: state.showRoots,
       showTriads: state.showTriads,
+      showChordMode: state.showChordMode,
       noteLabelMode: state.noteLabelMode,
+      selectedRomanDegree: state.selectedRomanDegree,
+      chordExtension: state.chordExtension,
     }),
   })
 );

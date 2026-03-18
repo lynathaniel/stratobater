@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
 import type { FretData, NoteLabelMode } from '../utils/fretboard';
-import { getFretboard } from '../utils/fretboard';
+import type { ChordExtension, RomanNumeralButton } from '../store/useStore';
+import { getFretboard, getRomanNumeralButtons, getChordRoot, formatChordQuality, formatChordExtension } from '../utils/fretboard';
 import clsx from 'clsx';
 import { Circle, Triangle, Type } from 'lucide-react';
 import { DualModeSelector } from './DualModeSelector';
@@ -11,9 +12,11 @@ interface FretboardControlsProps {
   scaleType: string;
   showRoots: boolean;
   showTriads: boolean;
+  showChordMode: boolean;
   noteLabelMode: NoteLabelMode;
   onToggleRoots: () => void;
   onToggleTriads: () => void;
+  onToggleChordMode: () => void;
   onCycleLabelMode: () => void;
   onOpenKeyModal: () => void;
   onOpenScaleModal: () => void;
@@ -24,9 +27,11 @@ const FretboardControls: React.FC<FretboardControlsProps> = ({
   scaleType,
   showRoots,
   showTriads,
+  showChordMode,
   noteLabelMode,
   onToggleRoots,
   onToggleTriads,
+  onToggleChordMode,
   onCycleLabelMode,
   onOpenKeyModal,
   onOpenScaleModal,
@@ -99,6 +104,18 @@ const FretboardControls: React.FC<FretboardControlsProps> = ({
           Triads
         </button>
         <button
+          onClick={onToggleChordMode}
+          className={clsx(
+            "px-4 py-2 rounded-md text-sm font-semibold transition-all border flex items-center justify-center",
+            showChordMode
+              ? "bg-[#E6A500]/20 text-[#E6A500] border-[#E6A500]/50 hover:bg-[#E6A500]/30"
+              : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
+          )}
+        >
+          <Triangle size={16} className="mr-2" />
+          Chords
+        </button>
+        <button
           onClick={onCycleLabelMode}
           className={clsx(
             "px-4 py-2 rounded-md text-sm font-semibold transition-all border flex items-center justify-center",
@@ -109,6 +126,129 @@ const FretboardControls: React.FC<FretboardControlsProps> = ({
           {getLabelModeLabel()}
         </button>
       </div>
+    </div>
+  );
+};
+
+interface ChordDisplayProps {
+  root: string;
+  scaleType: string;
+  selectedDegree: number | null;
+  chordExtension: ChordExtension | null;
+  romanButtons: RomanNumeralButton[];
+}
+
+const ChordDisplay: React.FC<ChordDisplayProps> = ({
+  root,
+  scaleType,
+  selectedDegree,
+  chordExtension,
+  romanButtons,
+}) => {
+  if (selectedDegree === null) return null;
+
+  const selectedButton = romanButtons.find(btn => btn.degree === selectedDegree);
+  if (!selectedButton) return null;
+
+  const chordRoot = getChordRoot(root, scaleType, selectedDegree);
+  const quality = formatChordQuality(selectedButton.quality);
+  const extension = formatChordExtension(chordExtension);
+
+  return (
+    <div className="px-6 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-center text-2xl font-bold text-neutral-200 mb-2 hover:bg-neutral-700 transition-colors">
+      {chordRoot}{quality}{extension}
+    </div>
+  );
+};
+
+interface ChordSelectorProps {
+  root: string;
+  scaleType: string;
+  selectedDegree: number | null;
+  chordExtension: ChordExtension | null;
+  romanButtons: RomanNumeralButton[];
+  onDegreeSelect: (degree: number | null) => void;
+  onExtensionChange: (extension: ChordExtension | null) => void;
+}
+
+const extensions: { value: ChordExtension; label: string }[] = [
+  { value: '6th', label: '6th' },
+  { value: '7th', label: '7th' },
+  { value: '9th', label: '9th' },
+  { value: '11th', label: '11th' },
+  { value: '13th', label: '13th' },
+];
+
+const ChordSelector: React.FC<ChordSelectorProps> = ({
+  root,
+  scaleType,
+  selectedDegree,
+  chordExtension,
+  romanButtons,
+  onDegreeSelect,
+  onExtensionChange,
+}) => {
+  const [extensionIndex, setExtensionIndex] = React.useState(extensions.findIndex(e => e.value === chordExtension));
+
+  React.useEffect(() => {
+    setExtensionIndex(extensions.findIndex(e => e.value === chordExtension));
+  }, [chordExtension]);
+
+  return (
+    <div className="flex flex-col items-center gap-4 mt-6 ml-[30px] mr-[30px]">
+      {/* Chord Name Display */}
+      <ChordDisplay
+        root={root}
+        scaleType={scaleType}
+        selectedDegree={selectedDegree}
+        chordExtension={chordExtension}
+        romanButtons={romanButtons}
+      />
+
+      {/* Roman Numeral Buttons */}
+      <div className="flex flex-wrap justify-center gap-2">
+        {romanButtons.map((btn) => {
+          const displayName = btn.qualitySymbol ? `${btn.roman}${btn.qualitySymbol}` : btn.roman;
+          return (
+            <button
+              key={btn.degree}
+              onClick={() => onDegreeSelect(selectedDegree === btn.degree ? 1 : btn.degree)}
+              className={clsx(
+                "relative px-3 py-2 rounded-md text-lg font-bold min-w-[50px] transition-all border",
+                selectedDegree === btn.degree
+                  ? "bg-[#E6A500]/30 text-yellow-200 border-[#E6A500]/60 ring-2 ring-[#E6A500]/40"
+                  : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
+              )}
+              aria-label={`Chord degree ${btn.degree}: ${displayName}`}
+              title={`${displayName} chord`}
+            >
+              {displayName}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Extension Slider - visible when chord selected */}
+      {selectedDegree !== null && (
+        <div className="flex items-center gap-4 w-full max-w-lg">
+          <div className="flex-1 flex bg-neutral-800 rounded-md border border-neutral-700 overflow-hidden">
+            {extensions.map((ext, idx) => (
+              <button
+                key={ext.value}
+                onClick={() => onExtensionChange(ext.value)}
+                className={clsx(
+                  "flex-1 px-3 py-2 text-sm font-semibold transition-all",
+                  idx === extensionIndex
+                    ? "bg-[#E6A500]/20 text-[#E6A500] font-bold border-r border-neutral-700"
+                    : "text-neutral-500 hover:text-neutral-300 border-r border-neutral-700 last:border-r-0"
+                )}
+              >
+                {ext.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -153,18 +293,45 @@ interface FretboardGridProps {
   fretboardData: FretData[][];
   showRoots: boolean;
   showTriads: boolean;
+  showChordMode: boolean;
   noteLabelMode: NoteLabelMode;
   fretCount: number;
+  selectedRomanDegree: number | null;
 }
 
-const FretboardGrid: React.FC<FretboardGridProps> = ({ fretboardData, showRoots, showTriads, noteLabelMode, fretCount = 22 }) => {
+const FretboardGrid: React.FC<FretboardGridProps> = ({ fretboardData, showRoots, showTriads, showChordMode, noteLabelMode, fretCount = 22, selectedRomanDegree }) => {
   const getNoteStyle = (fret: FretData) => {
-    if (fret.isRoot && showRoots) {
-      return "bg-red-500 text-white ring-red-900/50";
+    // When a roman degree is selected, we only highlight chord tones.
+    // If a non-tonic chord is selected (degree > 1), don't fall back to scale-based highlighting
+    // because that would incorrectly highlight the tonic triad.
+    const isTonicChord = selectedRomanDegree === 1;
+
+    if (fret.isChordTone) {
+      // 1. Root button takes precedence - chord root (role 1) = red
+      if (fret.chordToneRole === 1 && showRoots) {
+        return "bg-red-500 text-white ring-red-900/50";
+      }
+      // 2. Triad button - includes root, 3rd, and 5th in blue (when Roots is OFF)
+      if ((fret.chordToneRole === 1 || fret.chordToneRole === 3 || fret.chordToneRole === 5) && showTriads) {
+        return "bg-blue-500 text-white ring-blue-900/50";
+      }
+      // 3. Chord mode button - all chord tones = yellow
+      if (showChordMode) {
+        return "bg-[#E6A500] text-white ring-[#E6A500]/50";
+      }
     }
-    if (fret.isTriad && showTriads) {
-      return "bg-blue-500 text-white ring-blue-900/50";
+
+    // Scale-based (tonic) highlighting - only applies when tonic is selected or no chord selected
+    // Never apply when a non-tonic chord is selected
+    if (isTonicChord || selectedRomanDegree === null) {
+      if (fret.isRoot && showRoots) {
+        return "bg-red-500 text-white ring-red-900/50";
+      }
+      if (fret.isTriad && showTriads) {
+        return "bg-blue-500 text-white ring-blue-900/50";
+      }
     }
+
     return "bg-neutral-200 text-neutral-900 ring-neutral-900/50 opacity-100";
   };
 
@@ -235,13 +402,17 @@ export const Fretboard: React.FC = () => {
     tuning,
     showRoots,
     showTriads,
+    showChordMode,
     noteLabelMode,
     keyItems,
     scaleItems,
+    selectedRomanDegree,
+    chordExtension,
     setSelectedKey,
     setSelectedScale,
     toggleShowRoots,
     toggleShowTriads,
+    toggleShowChordMode,
     setNoteLabelMode,
     toggleKeyVisibility,
     toggleScaleVisibility,
@@ -251,7 +422,17 @@ export const Fretboard: React.FC = () => {
     reorderScales,
     resetKeys,
     resetScales,
+    setSelectedRomanDegree,
+    setChordExtension,
   } = useStore();
+
+  // Calculate roman numeral buttons
+  const romanButtons = React.useMemo(
+    () => getRomanNumeralButtons(scaleType),
+    [scaleType]
+  );
+
+  const fretboardData = getFretboard(root, scaleType, tuning, 22, selectedRomanDegree, chordExtension);
 
   // Wrapper functions for visibility toggle with optional bulk mode
   const handleKeyVisibilityToggle = (key: string, isShiftHeld: boolean = false, currentlyAppliedIndex?: number) => {
@@ -276,8 +457,6 @@ export const Fretboard: React.FC = () => {
   const openScaleModal = () => setIsScaleModalOpen(true);
   const closeKeyModal = () => setIsKeyModalOpen(false);
   const closeScaleModal = () => setIsScaleModalOpen(false);
-
-  const fretboardData = getFretboard(root, scaleType, tuning, 22);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -328,12 +507,28 @@ export const Fretboard: React.FC = () => {
         const modes: NoteLabelMode[] = ['noteNames', 'scaleDegrees', 'none'];
         const currentIndex = modes.indexOf(noteLabelMode);
         setNoteLabelMode(modes[(currentIndex + 1) % modes.length]);
+      } else if (['1', '2', '3', '4', '5', '6', '7'].includes(e.key)) {
+        const degree = parseInt(e.key, 10);
+        setSelectedRomanDegree(degree);
+      } else if (e.key.toLowerCase() === 'c') {
+        toggleShowChordMode();
+      } else if (e.key === '=' || e.key === '+') {
+        const exts: ChordExtension[] = ['6th', '7th', '9th', '11th', '13th'];
+        const idx = chordExtension ? exts.indexOf(chordExtension) : -1;
+        // Cycle through extensions, cycling back to null after 13th
+        if (idx === -1) {
+          setChordExtension('6th');
+        } else if (idx === exts.length - 1) {
+          setChordExtension(null);
+        } else {
+          setChordExtension(exts[(idx + 1)]);
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [root, scaleType, keyItems, scaleItems, setSelectedKey, setSelectedScale, toggleShowRoots, toggleShowTriads, setNoteLabelMode, noteLabelMode, isKeyModalOpen, isScaleModalOpen]);
+  }, [root, scaleType, keyItems, scaleItems, setSelectedKey, setSelectedScale, toggleShowRoots, toggleShowTriads, toggleShowChordMode, setNoteLabelMode, noteLabelMode, isKeyModalOpen, isScaleModalOpen, selectedRomanDegree, chordExtension, setSelectedRomanDegree, setChordExtension]);
 
   return (
     <div className="w-full flex flex-col flex-1">
@@ -342,9 +537,11 @@ export const Fretboard: React.FC = () => {
         scaleType={scaleType}
         showRoots={showRoots}
         showTriads={showTriads}
+        showChordMode={showChordMode}
         noteLabelMode={noteLabelMode}
         onToggleRoots={toggleShowRoots}
         onToggleTriads={toggleShowTriads}
+        onToggleChordMode={toggleShowChordMode}
         onCycleLabelMode={() => {
           const modes: NoteLabelMode[] = ['noteNames', 'scaleDegrees', 'none'];
           const currentIndex = modes.indexOf(noteLabelMode);
@@ -380,44 +577,75 @@ export const Fretboard: React.FC = () => {
         />
       )}
       <div className="w-full overflow-x-auto pb-8 custom-scrollbar">
-        <div className="flex">
-          <StringLabels tuning={tuning} />
-          <FretboardGrid fretboardData={fretboardData} showRoots={showRoots} showTriads={showTriads} noteLabelMode={noteLabelMode} fretCount={22} />
-          <div className="flex flex-col min-w-[30px] pl-2"></div>
+        <div className="flex flex-col">
+          <div className="flex">
+            <StringLabels tuning={tuning} />
+            <FretboardGrid
+              fretboardData={fretboardData}
+              showRoots={showRoots}
+              showTriads={showTriads}
+              showChordMode={showChordMode}
+              noteLabelMode={noteLabelMode}
+              fretCount={22}
+              selectedRomanDegree={selectedRomanDegree}
+            />
+            <div className="flex flex-col min-w-[30px] pl-2"></div>
+          </div>
+          <ChordSelector
+            root={root}
+            scaleType={scaleType}
+            selectedDegree={selectedRomanDegree}
+            chordExtension={chordExtension}
+            romanButtons={romanButtons}
+            onDegreeSelect={setSelectedRomanDegree}
+            onExtensionChange={setChordExtension}
+          />
         </div>
       </div>
       <div className="fixed bottom-4 left-0 right-0 text-center text-sm">
         <div className="bg-neutral-700/20 px-3 py-3 rounded-lg border border-neutral-700 w-fit inline-block mx-4 lg:mx-12 md:mx-8">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">←/→</span>
-            <span className="text-neutral-500">Cycle Keys</span>
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-3">
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">←/→</span>
+            <span className="text-neutral-500 text-xs leading-tight">Cycle Keys</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">
               <span className="text-xs mx-0.5">[</span><span className="mx-0.5">/</span><span className="text-xs mx-0.5">]</span>
             </span>
-            <span className="text-neutral-500">Cycle Scales</span>
+            <span className="text-neutral-500 text-xs leading-tight">Cycle Scales</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">K</span>
-            <span className="text-neutral-500">Key Menu</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">K</span>
+            <span className="text-neutral-500 text-xs leading-tight">Key Menu</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">S</span>
-            <span className="text-neutral-500">Scale Menu</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">S</span>
+            <span className="text-neutral-500 text-xs leading-tight">Scale Menu</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">R</span>
-            <span className="text-neutral-500">Roots</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">R</span>
+            <span className="text-neutral-500 text-xs leading-tight">Roots</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">T</span>
-            <span className="text-neutral-500">Triads</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">T</span>
+            <span className="text-neutral-500 text-xs leading-tight">Triads</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40">L</span>
-            <span className="text-neutral-500">Labels</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">L</span>
+            <span className="text-neutral-500 text-xs leading-tight">Labels</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">1-7</span>
+            <span className="text-neutral-500 text-xs leading-tight">Chord</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">C</span>
+            <span className="text-neutral-500 text-xs leading-tight">Chords</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-neutral-200/50 bg-neutral-700/20 px-2 py-0.5 rounded border border-neutral-600/40 text-sm">=</span>
+            <span className="text-neutral-500 text-xs leading-tight">Extension</span>
           </div>
         </div>
         </div>
