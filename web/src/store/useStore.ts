@@ -141,61 +141,62 @@ export const useStore = create<StoreState & StoreActions>()(
     scaleType: scale
   })),
   toggleKeyVisibility: (key: string) => set((state) => {
-    const visibleCount = state.keyItems.filter(i => i.isVisible).length;
-    const itemToToggle = state.keyItems.find(i => i.id === key);
+    // Perform the toggle without blocking
+    let newKeyItems = state.keyItems.map(item =>
+      item.id === key ? { ...item, isVisible: !item.isVisible } : item
+    );
 
-    // Safety: Can't hide current selection
-    if (itemToToggle?.isCurrent && itemToToggle.isVisible) {
-      return state;
-    }
-    // Safety: Can't hide last visible item
-    if (visibleCount <= 1 && itemToToggle?.isVisible) {
-      return state;
+    // Auto-reactive: If all items are hidden, make the current visible again
+    const hasAnyVisible = newKeyItems.some(item => item.isVisible);
+    if (!hasAnyVisible) {
+      const currentIndex = newKeyItems.findIndex(item => item.isCurrent);
+      if (currentIndex !== -1) {
+        newKeyItems = newKeyItems.map((item, i) =>
+          i === currentIndex ? { ...item, isVisible: true } : item
+        );
+      }
     }
 
-    return {
-      keyItems: state.keyItems.map(item =>
-        item.id === key ? { ...item, isVisible: !item.isVisible } : item
-      )
-    };
+    return { keyItems: newKeyItems };
   }),
   toggleScaleVisibility: (scale: string) => set((state) => {
-    const visibleCount = state.scaleItems.filter(i => i.isVisible).length;
-    const itemToToggle = state.scaleItems.find(i => i.id === scale);
+    // Perform the toggle without blocking
+    let newScaleItems = state.scaleItems.map(item =>
+      item.id === scale ? { ...item, isVisible: !item.isVisible } : item
+    );
 
-    // Safety: Can't hide current selection
-    if (itemToToggle?.isCurrent && itemToToggle.isVisible) {
-      return state;
-    }
-    // Safety: Can't hide last visible item
-    if (visibleCount <= 1 && itemToToggle?.isVisible) {
-      return state;
+    // Auto-reactive: If all items are hidden, make the current visible again
+    const hasAnyVisible = newScaleItems.some(item => item.isVisible);
+    if (!hasAnyVisible) {
+      const currentIndex = newScaleItems.findIndex(item => item.isCurrent);
+      if (currentIndex !== -1) {
+        newScaleItems = newScaleItems.map((item, i) =>
+          i === currentIndex ? { ...item, isVisible: true } : item
+        );
+      }
     }
 
-    return {
-      scaleItems: state.scaleItems.map(item =>
-        item.id === scale ? { ...item, isVisible: !item.isVisible } : item
-      )
-    };
+    return { scaleItems: newScaleItems };
   }),
   toggleBulkKeyVisibility: (key: string, isShiftHeld: boolean, currentlyAppliedIndex?: number) => set((state) => {
-    // If not shift held, delegate to single toggle
+    // If not shift held, delegate to single toggle with auto-reactive
     if (!isShiftHeld) {
-      const visibleCount = state.keyItems.filter(i => i.isVisible).length;
-      const itemToToggle = state.keyItems.find(i => i.id === key);
+      let newKeyItems = state.keyItems.map(item =>
+        item.id === key ? { ...item, isVisible: !item.isVisible } : item
+      );
 
-      if (itemToToggle?.isCurrent && itemToToggle.isVisible) {
-        return state;
-      }
-      if (visibleCount <= 1 && itemToToggle?.isVisible) {
-        return state;
+      // Auto-reactive: If all items are hidden, make the current visible again
+      const hasAnyVisible = newKeyItems.some(item => item.isVisible);
+      if (!hasAnyVisible) {
+        const currentIndex = newKeyItems.findIndex(item => item.isCurrent);
+        if (currentIndex !== -1) {
+          newKeyItems = newKeyItems.map((item, i) =>
+            i === currentIndex ? { ...item, isVisible: true } : item
+          );
+        }
       }
 
-      return {
-        keyItems: state.keyItems.map(item =>
-          item.id === key ? { ...item, isVisible: !item.isVisible } : item
-        )
-      };
+      return { keyItems: newKeyItems };
     }
 
     // Determine "currently applied" index (the one to exclude from bulk toggle)
@@ -208,22 +209,24 @@ export const useStore = create<StoreState & StoreActions>()(
     if (!targetItem) return state;
     const targetIndex = state.keyItems.findIndex(item => item.id === key);
 
-    // If target item is the currently applied item, fall back to single toggle
+    // If target item is the currently applied item, fall back to single toggle with auto-reactive
     if (targetIndex === currentAppliedIndex) {
-      const visibleCount = state.keyItems.filter(i => i.isVisible).length;
+      let newKeyItems = state.keyItems.map(item =>
+        item.id === key ? { ...item, isVisible: !item.isVisible } : item
+      );
 
-      if (targetItem?.isCurrent && targetItem.isVisible) {
-        return state;
-      }
-      if (visibleCount <= 1 && targetItem?.isVisible) {
-        return state;
+      // Auto-reactive: If all items are hidden, make the current visible again
+      const hasAnyVisible = newKeyItems.some(item => item.isVisible);
+      if (!hasAnyVisible) {
+        const currentIndex = newKeyItems.findIndex(item => item.isCurrent);
+        if (currentIndex !== -1) {
+          newKeyItems = newKeyItems.map((item, i) =>
+            i === currentIndex ? { ...item, isVisible: true } : item
+          );
+        }
       }
 
-      return {
-        keyItems: state.keyItems.map(item =>
-          item.id === key ? { ...item, isVisible: !item.isVisible } : item
-        )
-      };
+      return { keyItems: newKeyItems };
     }
 
     // Get all non-current items
@@ -240,42 +243,44 @@ export const useStore = create<StoreState & StoreActions>()(
     // - If mixed states, use target's state
     const newVisibilityState = allSameState ? !targetItem.isVisible : targetItem.isVisible;
 
-    // Safety: Ensure at least 1 item remains visible
-    const visibleCountAfterChange = state.keyItems.filter((item, i) => {
-      if (i === currentAppliedIndex) return item.isVisible; // Keep current item as-is
-      return newVisibilityState;
-    }).length;
+    // Apply new visibility to all items except currently applied
+    let newKeyItems = state.keyItems.map((item, i) => {
+      if (i === currentAppliedIndex) return item; // Don't change currently applied item
+      return { ...item, isVisible: newVisibilityState };
+    });
 
-    if (visibleCountAfterChange === 0) {
-      return state; // Don't proceed if result would have no visible items
+    // Auto-reactive: If all items are hidden, make the current visible again
+    const hasAnyVisible = newKeyItems.some(item => item.isVisible);
+    if (!hasAnyVisible) {
+      const currentIndex = newKeyItems.findIndex(item => item.isCurrent);
+      if (currentIndex !== -1) {
+        newKeyItems = newKeyItems.map((item, i) =>
+          i === currentIndex ? { ...item, isVisible: true } : item
+        );
+      }
     }
 
-    // Apply new visibility to all items except currently applied
-    return {
-      keyItems: state.keyItems.map((item, i) => {
-        if (i === currentAppliedIndex) return item; // Don't change currently applied item
-        return { ...item, isVisible: newVisibilityState };
-      })
-    };
+    return { keyItems: newKeyItems };
   }),
   toggleBulkScaleVisibility: (scale: string, isShiftHeld: boolean, currentlyAppliedIndex?: number) => set((state) => {
-    // If not shift held, delegate to single toggle
+    // If not shift held, delegate to single toggle with auto-reactive
     if (!isShiftHeld) {
-      const visibleCount = state.scaleItems.filter(i => i.isVisible).length;
-      const itemToToggle = state.scaleItems.find(i => i.id === scale);
+      let newScaleItems = state.scaleItems.map(item =>
+        item.id === scale ? { ...item, isVisible: !item.isVisible } : item
+      );
 
-      if (itemToToggle?.isCurrent && itemToToggle.isVisible) {
-        return state;
-      }
-      if (visibleCount <= 1 && itemToToggle?.isVisible) {
-        return state;
+      // Auto-reactive: If all items are hidden, make the current visible again
+      const hasAnyVisible = newScaleItems.some(item => item.isVisible);
+      if (!hasAnyVisible) {
+        const currentIndex = newScaleItems.findIndex(item => item.isCurrent);
+        if (currentIndex !== -1) {
+          newScaleItems = newScaleItems.map((item, i) =>
+            i === currentIndex ? { ...item, isVisible: true } : item
+          );
+        }
       }
 
-      return {
-        scaleItems: state.scaleItems.map(item =>
-          item.id === scale ? { ...item, isVisible: !item.isVisible } : item
-        )
-      };
+      return { scaleItems: newScaleItems };
     }
 
     // Determine "currently applied" index (the one to exclude from bulk toggle)
@@ -288,22 +293,24 @@ export const useStore = create<StoreState & StoreActions>()(
     if (!targetItem) return state;
     const targetIndex = state.scaleItems.findIndex(item => item.id === scale);
 
-    // If target item is the currently applied item, fall back to single toggle
+    // If target item is the currently applied item, fall back to single toggle with auto-reactive
     if (targetIndex === currentAppliedIndex) {
-      const visibleCount = state.scaleItems.filter(i => i.isVisible).length;
+      let newScaleItems = state.scaleItems.map(item =>
+        item.id === scale ? { ...item, isVisible: !item.isVisible } : item
+      );
 
-      if (targetItem?.isCurrent && targetItem.isVisible) {
-        return state;
-      }
-      if (visibleCount <= 1 && targetItem?.isVisible) {
-        return state;
+      // Auto-reactive: If all items are hidden, make the current visible again
+      const hasAnyVisible = newScaleItems.some(item => item.isVisible);
+      if (!hasAnyVisible) {
+        const currentIndex = newScaleItems.findIndex(item => item.isCurrent);
+        if (currentIndex !== -1) {
+          newScaleItems = newScaleItems.map((item, i) =>
+            i === currentIndex ? { ...item, isVisible: true } : item
+          );
+        }
       }
 
-      return {
-        scaleItems: state.scaleItems.map(item =>
-          item.id === scale ? { ...item, isVisible: !item.isVisible } : item
-        )
-      };
+      return { scaleItems: newScaleItems };
     }
 
     // Get all non-current items
@@ -320,23 +327,24 @@ export const useStore = create<StoreState & StoreActions>()(
     // - If mixed states, use target's state
     const newVisibilityState = allSameState ? !targetItem.isVisible : targetItem.isVisible;
 
-    // Safety: Ensure at least 1 item remains visible
-    const visibleCountAfterChange = state.scaleItems.filter((item, i) => {
-      if (i === currentAppliedIndex) return item.isVisible; // Keep current item as-is
-      return newVisibilityState;
-    }).length;
+    // Apply new visibility to all items except currently applied
+    let newScaleItems = state.scaleItems.map((item, i) => {
+      if (i === currentAppliedIndex) return item; // Don't change currently applied item
+      return { ...item, isVisible: newVisibilityState };
+    });
 
-    if (visibleCountAfterChange === 0) {
-      return state; // Don't proceed if result would have no visible items
+    // Auto-reactive: If all items are hidden, make the current visible again
+    const hasAnyVisible = newScaleItems.some(item => item.isVisible);
+    if (!hasAnyVisible) {
+      const currentIndex = newScaleItems.findIndex(item => item.isCurrent);
+      if (currentIndex !== -1) {
+        newScaleItems = newScaleItems.map((item, i) =>
+          i === currentIndex ? { ...item, isVisible: true } : item
+        );
+      }
     }
 
-    // Apply new visibility to all items except currently applied
-    return {
-      scaleItems: state.scaleItems.map((item, i) => {
-        if (i === currentAppliedIndex) return item; // Don't change currently applied item
-        return { ...item, isVisible: newVisibilityState };
-      })
-    };
+    return { scaleItems: newScaleItems };
   }),
   reorderKeys: (newOrder: ConfigurableItem[]) => set({ keyItems: newOrder }),
   reorderScales: (newOrder: ConfigurableItem[]) => set({ scaleItems: newOrder }),

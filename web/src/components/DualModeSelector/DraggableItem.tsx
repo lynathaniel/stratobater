@@ -104,7 +104,7 @@ export const DraggableItem = forwardRef<HTMLDivElement, DraggableItemProps>(
             )}
             disabled={isVisibilityDisabled}
             aria-label={item.isVisible ? 'Hide item' : 'Show item'}
-            title={isVisibilityDisabled ? 'Cannot hide current selection or last visible item' : undefined}
+            title={item.isVisible ? 'Toggle visibility off' : 'Toggle visibility on'}
           >
             {item.isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
           </button>

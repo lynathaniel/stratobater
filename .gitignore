@@ -1,2 +1,4 @@
 .claude/*
 .playwright-mcp/*
+web/test-results/*
+web/playwright-report/*

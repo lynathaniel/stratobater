@@ -59,12 +59,9 @@ export const EditModeList: React.FC<EditModeListProps> = ({
     onToggleVisibility(item.id, isShiftHeld, currentlyAppliedIndex);
   };
 
-  const isVisibilityDisabled = (item: ConfigurableItem) => {
-    // Can't hide current selection
-    if (item.isCurrent && item.isVisible) return true;
-    // Can't hide if only one visible item
-    const visibleCount = items.filter(i => i.isVisible).length;
-    if (visibleCount <= 1 && item.isVisible) return true;
+  const isVisibilityDisabled = () => {
+    // With auto-reactive behavior, no items need to be locked.
+    // Users can toggle any item, and if all become hidden, the current will auto-reactivate.
     return false;
   };
 
@@ -79,7 +76,7 @@ export const EditModeList: React.FC<EditModeListProps> = ({
         strategy={verticalListSortingStrategy}
       >
         {items.map((item, index) => {
-          const isVisibilityLocked = isVisibilityDisabled(item);
+          const isVisibilityLocked = isVisibilityDisabled();
 
           return (
             <DraggableItem
