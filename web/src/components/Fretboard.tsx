@@ -111,6 +111,7 @@ const FretboardControls: React.FC<FretboardControlsProps> = ({
               ? "bg-[#E6A500]/20 text-[#E6A500] border-[#E6A500]/50 hover:bg-[#E6A500]/30"
               : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
           )}
+          data-testid="chord-mode-button"
         >
           <Triangle size={16} className="mr-2" />
           Chords
@@ -210,42 +211,44 @@ const ChordSelector: React.FC<ChordSelectorProps> = ({
         {romanButtons.map((btn) => {
           const displayName = btn.qualitySymbol ? `${btn.roman}${btn.qualitySymbol}` : btn.roman;
           return (
-            <button
-              key={btn.degree}
-              onClick={() => onDegreeSelect(selectedDegree === btn.degree ? 1 : btn.degree)}
-              className={clsx(
-                "relative px-3 py-2 rounded-md text-lg font-bold min-w-[50px] transition-all border",
-                selectedDegree === btn.degree
-                  ? "bg-[#E6A500]/30 text-yellow-200 border-[#E6A500]/60 ring-2 ring-[#E6A500]/40"
-                  : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
-              )}
-              aria-label={`Chord degree ${btn.degree}: ${displayName}`}
-              title={`${displayName} chord`}
-            >
-              {displayName}
-            </button>
+        <button
+          key={btn.degree}
+          onClick={() => onDegreeSelect(selectedDegree === btn.degree ? 1 : btn.degree)}
+          className={clsx(
+            "relative px-3 py-2 rounded-md text-lg font-bold min-w-[50px] transition-all border",
+            selectedDegree === btn.degree
+              ? "bg-[#E6A500]/30 text-yellow-200 border-[#E6A500]/60 ring-2 ring-[#E6A500]/40"
+              : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
+          )}
+          aria-label={`Chord degree ${btn.degree}: ${displayName}`}
+          title={`${displayName} chord`}
+          data-testid={`chord-button-${btn.roman}`}
+        >
+          {displayName}
+        </button>
           );
         })}
       </div>
 
-      {/* Extension Slider - visible when chord selected */}
-      {selectedDegree !== null && (
-        <div className="flex items-center gap-4 w-full max-w-lg">
-          <div className="flex-1 flex bg-neutral-800 rounded-md border border-neutral-700 overflow-hidden">
-            {extensions.map((ext, idx) => (
-              <button
-                key={ext.value}
-                onClick={() => onExtensionChange(ext.value)}
-                className={clsx(
-                  "flex-1 px-3 py-2 text-sm font-semibold transition-all",
-                  idx === extensionIndex
-                    ? "bg-[#E6A500]/20 text-[#E6A500] font-bold border-r border-neutral-700"
-                    : "text-neutral-500 hover:text-neutral-300 border-r border-neutral-700 last:border-r-0"
-                )}
-              >
-                {ext.label}
-              </button>
-            ))}
+        {/* Extension Slider - visible when chord selected */}
+        {selectedDegree !== null && (
+          <div className="flex items-center gap-4 w-full max-w-lg">
+            <div className="flex-1 flex bg-neutral-800 rounded-md border border-neutral-700 overflow-hidden" data-testid="extension-slider">
+        {extensions.map((ext, idx) => (
+          <button
+            key={ext.value}
+            onClick={() => onExtensionChange(ext.value)}
+            className={clsx(
+              "flex-1 px-3 py-2 text-sm font-semibold transition-all",
+              idx === extensionIndex
+                ? "bg-[#E6A500]/20 text-[#E6A500] font-bold border-r border-neutral-700"
+                : "text-neutral-500 hover:text-neutral-300 border-r border-neutral-700 last:border-r-0"
+            )}
+            data-testid={`extension-button-${ext.value}`}
+          >
+            {ext.label}
+          </button>
+        ))}
           </div>
         </div>
       )}
@@ -259,12 +262,12 @@ interface StringLabelsProps {
 
 const StringLabels: React.FC<StringLabelsProps> = ({ tuning }) => {
   return (
-    <div className="flex flex-col min-w-[30px] pr-2 justify-start items-end text-neutral-400 text-sm font-bold">
+    <div data-testid="string-labels" className="flex flex-col min-w-[30px] pr-2 justify-start items-end text-neutral-400 text-sm font-bold">
       {tuning.slice().reverse().map((stringNote, index) => {
         const noteName = stringNote.charAt(0);
         const displayLabel = noteName === 'E' && stringNote.endsWith('4') ? 'e' : noteName;
         return (
-          <div key={index} className="h-12 flex items-center">
+          <div key={index} data-testid="string-label" className="h-12 flex items-center">
             {displayLabel}
           </div>
         );
@@ -279,9 +282,9 @@ interface FretNumbersProps {
 
 const FretNumbers: React.FC<FretNumbersProps> = ({ fretCount = 22 }) => {
   return (
-    <div className="flex pl-16 bg-neutral-900">
+    <div data-testid="fret-numbers" className="flex pl-16 bg-neutral-900">
       {Array.from({ length: fretCount }).map((_, i) => (
-        <div key={i} className="flex-1 text-center text-sm font-bold text-neutral-500 py-1 font-mono">
+        <div key={i} data-testid="fret-number" className="flex-1 text-center text-sm font-bold text-neutral-500 py-1 font-mono">
           {[1, 3, 5, 7, 9, 12, 15, 17, 19, 21].includes(i + 1) ? i + 1 : ''}
         </div>
       ))}
@@ -335,55 +338,57 @@ const FretboardGrid: React.FC<FretboardGridProps> = ({ fretboardData, showRoots,
     return "bg-neutral-200 text-neutral-900 ring-neutral-900/50 opacity-100";
   };
 
-  const StringRow: React.FC<{ stringData: FretData[]; stringIndex: number }> = ({ stringData, stringIndex }) => {
-    return (
-      <div className="flex relative group">
+const StringRow: React.FC<{ stringData: FretData[]; stringIndex: number }> = ({ stringData, stringIndex }) => {
+  return (
+    <div data-testid="string-row" className="flex relative group">
+      <div
+        className="absolute top-1/2 left-0 w-full bg-neutral-600 -translate-y-1/2 z-0 pointer-events-none shadow-sm"
+        style={{ height: [1, 2, 2, 3, 4, 5][stringIndex] + 'px' }}
+      />
+      {stringData.map((fret, fretIndex) => (
         <div
-          className="absolute top-1/2 left-0 w-full bg-neutral-600 -translate-y-1/2 z-0 pointer-events-none shadow-sm"
-          style={{ height: [1, 2, 2, 3, 4, 5][stringIndex] + 'px' }}
-        />
-        {stringData.map((fret, fretIndex) => (
-          <div
-            key={fretIndex}
-            className={clsx(
-              "fret-cell h-12 flex items-center justify-center relative",
-              fretIndex === 0
-                ? "w-16 flex-none border-r-4 border-neutral-400"
-                : "flex-1"
-            )}
-          >
-            {fretIndex > 0 && (
-              <div
-                className={clsx(
-                  "absolute right-0 w-[2px] bg-neutral-600 pointer-events-none z-0",
-                  stringIndex === 0 ? "top-1/2 h-1/2" : stringIndex === 5 ? "top-0 h-1/2" : "top-0 h-full"
-                )}
-              />
-            )}
-            {fret.inScale && (
-              <div
-                className={clsx(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-base font-bold shadow-md transition-transform duration-200 cursor-default select-none ring-2 relative z-20 hover:scale-110",
-                  getNoteStyle(fret)
-                )}
-                aria-label={noteLabelMode === 'none' ? `${fret.noteName}${fret.scaleDegree ? `, scale degree ${fret.scaleDegree}` : ''}` : undefined}
-                title={noteLabelMode === 'none' ? `${fret.noteName}${fret.scaleDegree ? ` (degree ${fret.scaleDegree})` : ''}` : undefined}
-              >
-                {noteLabelMode === 'noteNames' && fret.noteName}
-                {noteLabelMode === 'scaleDegrees' && fret.scaleDegree && (
-                  <>
-                    {fret.accidentalPrefix}
-                    {fret.scaleDegree}
-                  </>
-                )}
-                {noteLabelMode === 'none' && null}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    );
-  };
+          key={fretIndex}
+          data-testid="fret-cell"
+          className={clsx(
+            "fret-cell h-12 flex items-center justify-center relative",
+            fretIndex === 0
+              ? "w-16 flex-none border-r-4 border-neutral-400"
+              : "flex-1"
+          )}
+        >
+          {fretIndex > 0 && (
+            <div
+              className={clsx(
+                "absolute right-0 w-[2px] bg-neutral-600 pointer-events-none z-0",
+                stringIndex === 0 ? "top-1/2 h-1/2" : stringIndex === 5 ? "top-0 h-1/2" : "top-0 h-full"
+              )}
+            />
+          )}
+          {fret.inScale && (
+            <div
+              data-testid="note-circle"
+              className={clsx(
+                "w-8 h-8 rounded-full flex items-center justify-center text-base font-bold shadow-md transition-transform duration-200 cursor-default select-none ring-2 relative z-20 hover:scale-110",
+                getNoteStyle(fret)
+              )}
+              aria-label={noteLabelMode === 'none' ? `${fret.noteName}${fret.scaleDegree ? `, scale degree ${fret.scaleDegree}` : ''}` : undefined}
+              title={noteLabelMode === 'none' ? `${fret.noteName}${fret.scaleDegree ? ` (degree ${fret.scaleDegree})` : ''}` : undefined}
+            >
+              {noteLabelMode === 'noteNames' && fret.noteName}
+              {noteLabelMode === 'scaleDegrees' && fret.scaleDegree && (
+                <>
+                  {fret.accidentalPrefix}
+                  {fret.scaleDegree}
+                </>
+              )}
+              {noteLabelMode === 'none' && null}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
 
   return (
     <div className="flex flex-col flex-1 rounded-l-sm shadow-2xl bg-neutral-900">

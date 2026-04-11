@@ -1,20 +1,20 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'url';
 
-// https://vite.dev/config/
+// https://vitest.dev/config/
 export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
-    include: ['src/tests/**/*.test.tsx', 'src/tests/**/*.test.ts'],
+    include: ['src/__tests__/**/*.test.tsx', 'src/__tests__/**/*.test.ts'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/e2e/**',
       '**/__playwright__/**',
+      '**/tests/**', // Exclude all legacy test directories
       '**/*.spec.ts'
     ],
     coverage: {
@@ -24,7 +24,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': '/Users/natha/projects/stratobater/web/src'
     }
   }
 });

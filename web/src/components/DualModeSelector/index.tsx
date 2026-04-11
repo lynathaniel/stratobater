@@ -238,6 +238,7 @@ export const DualModeSelector: React.FC<DualModeSelectorProps> = ({
       role="dialog"
       aria-modal="true"
       aria-label={title}
+      data-testid="dual-mode-selector-modal"
     >
       <div
         ref={modalRef}
@@ -250,31 +251,34 @@ export const DualModeSelector: React.FC<DualModeSelectorProps> = ({
           <h2 className="text-lg font-semibold text-neutral-100">{title}</h2>
           <div className="flex items-center gap-2">
             <span className="text-xs text-neutral-500">{modeLabel}</span>
+          <button
+            onClick={handleModeToggle}
+            className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-700 transition-colors"
+            aria-label="Toggle mode"
+            title="Switch to Edit Mode (Space)"
+            data-testid="toggle-mode-button"
+          >
+            <Edit size={18} />
+          </button>
+          {onReset && (
             <button
-              onClick={handleModeToggle}
+              onClick={onReset}
               className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-700 transition-colors"
-              aria-label="Toggle mode"
-              title="Switch to Edit Mode (Space)"
+              aria-label="Reset to defaults"
+              title="Reset to defaults"
+              data-testid="reset-button"
             >
-              <Edit size={18} />
+              <RotateCcw size={18} />
             </button>
-            {onReset && (
-              <button
-                onClick={onReset}
-                className="p-1.5 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-700 transition-colors"
-                aria-label="Reset to defaults"
-                title="Reset to defaults"
-              >
-                <RotateCcw size={18} />
-              </button>
-            )}
-            <button
-              onClick={onClose}
-              className="p-1 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-700 transition-colors"
-              aria-label="Close modal"
-            >
-              <X size={20} />
-            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-700 transition-colors"
+            aria-label="Close modal"
+            data-testid="close-modal-button"
+          >
+            <X size={20} />
+          </button>
           </div>
         </div>
 
